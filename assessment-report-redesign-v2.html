@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Review & Finalize Assessment Results — Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Brand — Illuminate palette */
+  --brand-700:#142648;      /* dark blue (navy) */
+  --brand-600:#277AB1;      /* solid blue — primary */
+  --brand-500:#4870C1;      /* gradient blue */
+  --brand-400:#8FC3EE;      /* medium blue outline */
+  --brand-200:#C5DCF0;      /* blue stroke */
+  --brand-100:#DFF1FD;      /* light blue */
+  --brand-50:#E1F2F9;       /* blue chip bg */
+  --lavender-50:#EFF0FD;    /* Light B */
+
+  /* Surfaces */
+  --bg:#F6F8FB;
+  --canvas:#FDFDFD;
+  --ink-900:#142648;        /* dark blue → headings */
+  --ink-700:#3A3E53;        /* text light → body */
+  --ink-600:#50526B;        /* navy/high */
+  --ink-500:#617083;        /* medium grey */
+  --ink-400:#8C93A2;        /* muted */
+  --ink-300:#C1C6CD;        /* placeholders */
+  --line:#C5DCF0;           /* blue stroke as default border */
+  --line-soft:#ECECEC;      /* light grey */
+  --line-lighter:#EFF0FD;   /* lavender wash */
+
+  /* Status */
+  --ok-700:#258A58;         /* success/green-500 */
+  --ok-100:#E3F4EB;
+  --warn-700:#63410A;       /* warning/yellow-900 */
+  --warn-100:#FBF1D9;
+  --miss-700:#617083;
+  --miss-100:#ECECEC;
+
+  /* LENS — anchored to brand blue; status pills carry the variance */
+  --lens-logic:#277AB1;
+  --lens-logic-bg:#E1F2F9;
+  --lens-extend:#142648;
+  --lens-extend-bg:#EFF0FD;
+  --lens-novel:#63410A;
+  --lens-novel-bg:#FBF1D9;
+  --lens-self:#258A58;
+  --lens-self-bg:#E3F4EB;
+
+  --shadow-xs:0 1px 2px rgba(15,23,42,0.04);
+  --shadow-sm:0 4px 12px -4px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.05);
+  --shadow-md:0 12px 32px -12px rgba(15,23,42,0.12), 0 2px 6px rgba(15,23,42,0.05);
+
+  --radius-lg:18px;
+  --radius-md:14px;
+  --radius-sm:10px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink-700);font-family:'Quicksand',sans-serif;font-weight:500;-webkit-font-smoothing:antialiased;line-height:1.5}
+
+/* Browser chrome mock to match upload context */
+.chrome{
+  background:linear-gradient(135deg,#142648 0%,#277AB1 60%,#8FC3EE 100%);
+  min-height:100vh;
+  padding:48px 36px 64px;
+}
+.window{
+  max-width:1320px;margin:0 auto;background:#fff;
+  border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.35);
+}
+.titlebar{display:flex;align-items:center;gap:14px;padding:10px 16px;background:#F4F6F8;border-bottom:1px solid #E5E8EE}
+.dots{display:flex;gap:7px}
+.dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:#FF5F57}.dot.y{background:#FEBC2E}.dot.g{background:#28C840}
+.tab{padding:6px 14px;border-radius:8px 8px 0 0;background:#fff;border:1px solid #E5E8EE;border-bottom:none;font-size:12px;color:var(--ink-700);display:flex;align-items:center;gap:8px}
+.urlbar{flex:1;background:#fff;border:1px solid #E5E8EE;border-radius:8px;padding:5px 14px;font-size:12px;color:var(--ink-500)}
+
+/* App shell */
+.app{display:flex;min-height:1100px}
+
+/* Sidebar (kept as-is per spec) */
+.sidebar{width:64px;background:#142648;display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:16px}
+.sidebar .logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#277AB1,#4870C1);display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;letter-spacing:-.5px}
+.side-btn{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#8FC3EE;background:rgba(255,255,255,.06);cursor:pointer;transition:all .2s}
+.side-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.side-btn.active{background:linear-gradient(135deg,#277AB1,#4870C1);color:#fff}
+.side-spacer{flex:1}
+
+/* Main content */
+.main{flex:1;padding:34px 40px 56px;background:linear-gradient(180deg,#FDFDFD 0%,#F6F8FB 280px);overflow:hidden}
+
+/* Page header */
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:8px}
+.h-title{font-family:'Quicksand',sans-serif;font-weight:700;font-size:28px;letter-spacing:-0.01em;color:var(--ink-900);line-height:1.2}
+.h-sub{color:var(--ink-500);font-size:14px;margin-top:6px;max-width:640px}
+.skill-pill{display:inline-flex;align-items:center;gap:8px;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500;margin-top:14px}
+.skill-pill .label{color:var(--ink-500);font-weight:400}
+.dot-acc{width:6px;height:6px;border-radius:50%;background:var(--brand-500)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;font-weight:600;font-size:13.5px;cursor:pointer;transition:all .15s;font-family:inherit;border:none}
+.btn-ghost{background:#fff;color:var(--ink-900);border:1px solid var(--line);padding:10px 16px}
+.btn-ghost:hover{border-color:var(--ink-300);box-shadow:var(--shadow-xs)}
+.btn-primary{background:linear-gradient(180deg,var(--brand-600),var(--brand-700));color:#fff;padding:12px 20px;box-shadow:0 4px 14px -4px rgba(17,124,142,.5)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px -4px rgba(17,124,142,.55)}
+.btn-secondary{background:var(--brand-50);color:var(--brand-700);border:1px solid var(--brand-100);padding:10px 16px}
+
+/* Layout: TOC + content */
+.layout{display:grid;grid-template-columns:228px 1fr;gap:28px;margin-top:24px}
+
+/* TOC (kept) */
+.toc{position:sticky;top:24px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:10px;box-shadow:var(--shadow-xs)}
+.toc-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:11px;color:var(--ink-500);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.toc-item:hover{background:var(--line-soft);color:var(--ink-900)}
+.toc-item.active{background:var(--brand-50);color:var(--brand-700);font-weight:600}
+.toc-item svg{flex-shrink:0;opacity:.85}
+.toc-item.active svg{opacity:1}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-xs);margin-bottom:24px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.card-title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--ink-900);letter-spacing:-.01em}
+.icon-chip{width:32px;height:32px;border-radius:9px;background:var(--brand-50);color:var(--brand-700);display:grid;place-items:center;border:1px solid var(--brand-100)}
+.card-sub{color:var(--ink-500);font-size:13.5px;margin-bottom:24px}
+
+/* ===== Section 1: Evaluation Summary ===== */
+.eval-grid{display:grid;grid-template-columns:1.05fr 1.4fr;gap:22px}
+
+.score-card{
+  position:relative;
+  background:linear-gradient(160deg,#142648 0%,#1F4A7E 50%,#277AB1 110%);
+  border-radius:var(--radius-md);
+  padding:26px;
+  color:#fff;
+  overflow:hidden;
+}
+.score-card::before{
+  content:"";position:absolute;inset:auto -40px -80px auto;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.12) 0%,transparent 70%);
+}
+.score-card::after{
+  content:"";position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 .5h80M.5 0v80' stroke='%23ffffff10' fill='none'/%3E%3C/svg%3E");
+  opacity:.5;pointer-events:none;
+}
+.score-card > *{position:relative;z-index:1}
+.sc-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:600}
+.sc-flex{display:flex;align-items:center;gap:24px;margin-top:14px}
+.gauge{position:relative;width:128px;height:128px;flex-shrink:0}
+.gauge svg{transform:rotate(-90deg)}
+.gauge .track{stroke:rgba(255,255,255,.18)}
+.gauge .fill{stroke:#fff;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.gauge .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge .num b{font-family:'Quicksand',sans-serif;font-weight:700;font-size:36px;letter-spacing:-.02em;line-height:1}
+.gauge .num span{font-size:11px;opacity:.7;margin-top:4px;letter-spacing:.05em}
+.sc-meta .level{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;font-weight:600;margin-bottom:6px}
+.sc-meta .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600}
+.sc-meta .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#7DD9A8;box-shadow:0 0 0 2px rgba(125,217,168,.25)}
+.sc-bench{margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.18);font-size:13px;display:flex;align-items:center;gap:10px}
+.sc-bench svg{flex-shrink:0;opacity:.85}
+.sc-bench b{font-weight:600}
+.sc-narrative{display:flex;gap:10px;align-items:flex-start;margin-top:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);padding:12px 14px;border-radius:11px;font-size:13px;line-height:1.5}
+
+/* Strengths / Dev panel */
+.dual{display:grid;grid-template-rows:1fr 1fr;gap:14px}
+.note-block{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px}
+.nb-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.nb-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center}
+.nb-icon.ok{background:var(--ok-100);color:var(--ok-700)}
+.nb-icon.dev{background:var(--warn-100);color:var(--warn-700)}
+.nb-title{font-weight:700;font-size:14.5px}
+.nb-count{margin-left:auto;font-size:11.5px;color:var(--ink-400);font-weight:600;background:var(--line-soft);padding:3px 8px;border-radius:999px}
+.nb-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.nb-list li{display:flex;gap:10px;font-size:13.5px;color:var(--ink-700);line-height:1.5;padding-left:2px}
+.nb-list li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--ok-700);margin-top:8px;flex-shrink:0}
+.nb-list.dev li::before{background:var(--warn-700)}
+
+/* ===== Section 2: LENS Evaluation (the big redesign) ===== */
+.lens-section{margin-bottom:24px}
+.lens-intro{display:flex;gap:24px;align-items:center;background:linear-gradient(135deg,#F8FAFF 0%,#F2F6FA 100%);border:1px solid var(--line);border-radius:var(--radius-md);padding:20px 22px;margin-bottom:18px}
+.lens-intro-text{flex:1}
+.lens-intro h4{font-size:13.5px;font-weight:700;color:var(--ink-900);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.lens-intro h4 .tip{font-size:11px;background:var(--ink-900);color:#fff;padding:2px 7px;border-radius:5px;font-weight:600;letter-spacing:.04em}
+.lens-intro p{font-size:13px;color:var(--ink-500);line-height:1.55;max-width:560px}
+.lens-summary{display:flex;gap:6px;align-items:center}
+.lens-summary .ring{width:60px;height:60px;border-radius:50%;background:conic-gradient(var(--ok-700) 0deg 270deg,var(--miss-100) 270deg 360deg);display:grid;place-items:center;position:relative}
+.lens-summary .ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+.lens-summary .ring span{position:relative;font-weight:700;font-size:14px;color:var(--ink-900);font-family:'Quicksand',sans-serif}
+.lens-summary .ring small{position:relative;font-size:10px;color:var(--ink-500);display:block;line-height:1}
+.lens-stack{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink-500)}
+.lens-stack b{color:var(--ink-900);font-weight:700;font-size:13px}
+
+.lens-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lens-card{
+  position:relative;
+  border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:20px 20px 18px;background:#fff;
+  transition:all .2s ease;
+  overflow:hidden;
+}
+.lens-card:hover{border-color:var(--ink-300);box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+.lens-card .accent{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.lens-card.logic .accent{background:var(--lens-logic)}
+.lens-card.extend .accent{background:var(--lens-extend)}
+.lens-card.novel .accent{background:var(--lens-novel)}
+.lens-card.self .accent{background:var(--lens-self)}
+
+.lens-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.lens-meta{display:flex;align-items:center;gap:10px}
+.lens-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.lens-card.logic .lens-ico{background:var(--lens-logic-bg);color:var(--lens-logic)}
+.lens-card.extend .lens-ico{background:var(--lens-extend-bg);color:var(--lens-extend)}
+.lens-card.novel .lens-ico{background:var(--lens-novel-bg);color:var(--lens-novel)}
+.lens-card.self .lens-ico{background:var(--lens-self-bg);color:var(--lens-self)}
+.lens-name{font-weight:700;font-size:14.5px;color:var(--ink-900);line-height:1.2}
+.lens-name small{display:block;font-weight:500;font-size:11px;color:var(--ink-400);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px}
+
+.status{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.01em;white-space:nowrap}
+.status.strong{background:var(--ok-100);color:var(--ok-700)}
+.status.emerging{background:var(--warn-100);color:var(--warn-700)}
+.status.absent{background:var(--miss-100);color:var(--miss-700)}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+
+.lens-def{font-size:12.5px;color:var(--ink-500);line-height:1.55;margin-top:14px}
+.lens-evidence{margin-top:14px;background:#FAFBFD;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.lens-evidence .ev-label{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;color:var(--ink-400);flex-shrink:0;padding-top:1px}
+.lens-evidence p{font-size:13px;color:var(--ink-700);line-height:1.55;font-weight:500}
+.lens-evidence p::before{content:"\201C";color:var(--brand-400);font-size:22px;font-weight:700;line-height:0;margin-right:3px;vertical-align:-6px}
+.lens-evidence p::after{content:"\201D";color:var(--brand-400);font-size:22px;font-weight:700;line-height:0;vertical-align:-6px}
+
+.lens-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.lens-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--brand-600);cursor:pointer;transition:gap .15s}
+.lens-link:hover{gap:9px}
+.lens-link svg{flex-shrink:0}
+.lens-source{font-size:11.5px;color:var(--ink-400);display:inline-flex;align-items:center;gap:5px}
+.lens-source b{color:var(--ink-700);font-weight:600}
+
+/* ===== Section 3: How the Learner Responded ===== */
+.resp-grid{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:flex-start}
+.video-wrap{background:#0B1722;border-radius:var(--radius-md);overflow:hidden;position:relative;aspect-ratio:4/5}
+.video-img{width:100%;height:100%;object-fit:cover;display:block}
+.video-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(11,23,34,.85) 100%)}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.96);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .2s}
+.play-btn:hover{transform:translate(-50%,-50%) scale(1.06)}
+.play-btn svg{margin-left:3px}
+.video-meta{position:absolute;left:14px;right:14px;bottom:12px;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;font-size:12px}
+.video-meta .name{font-weight:600}
+.video-meta .time{opacity:.85;background:rgba(0,0,0,.4);padding:3px 8px;border-radius:6px;backdrop-filter:blur(6px)}
+.video-chapters{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.chapter{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-size:12.5px;cursor:pointer;transition:all .15s}
+.chapter:hover{border-color:var(--brand-100);background:var(--brand-50)}
+.chapter .ch-name{color:var(--ink-700);font-weight:500}
+.chapter .ch-time{color:var(--ink-400);font-variant-numeric:tabular-nums}
+.chapter.active{border-color:var(--brand-500);background:var(--brand-50)}
+.chapter.active .ch-name{color:var(--brand-700);font-weight:600}
+
+.q-list{display:flex;flex-direction:column;gap:10px}
+.q-card{border:1px solid var(--line);border-radius:var(--radius-md);background:#fff;overflow:hidden;transition:all .15s}
+.q-card:hover{border-color:var(--ink-300)}
+.q-card.open{border-color:var(--brand-500);box-shadow:var(--shadow-sm)}
+.q-head{padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.q-num{font-family:'Quicksand',sans-serif;font-weight:600;font-size:18px;color:var(--brand-700);width:34px;line-height:1}
+.q-text{flex:1;font-size:13.5px;color:var(--ink-700);font-weight:500;line-height:1.4}
+.q-tags{display:flex;gap:6px;flex-wrap:nowrap}
+.tag{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--line-soft);color:var(--ink-700);letter-spacing:.01em;white-space:nowrap}
+.tag.t-logic{background:var(--lens-logic-bg);color:var(--lens-logic)}
+.tag.t-extend{background:var(--lens-extend-bg);color:var(--lens-extend)}
+.tag.t-novel{background:var(--lens-novel-bg);color:var(--lens-novel)}
+.tag.t-self{background:var(--lens-self-bg);color:var(--lens-self)}
+.q-score{font-family:'Quicksand',sans-serif;font-weight:600;font-size:15px;color:var(--ink-900);font-variant-numeric:tabular-nums}
+.q-score small{font-size:11px;color:var(--ink-400);font-weight:500;font-family:'Quicksand',sans-serif}
+.q-arrow{width:28px;height:28px;border-radius:8px;background:var(--brand-50);color:var(--brand-700);display:grid;place-items:center;transition:transform .2s}
+.q-card.open .q-arrow{transform:rotate(90deg);background:var(--brand-500);color:#fff}
+
+.q-body{padding:0 16px 16px;display:none}
+.q-card.open .q-body{display:block}
+.resp-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.resp-block{border-radius:11px;padding:14px 16px;font-size:13px;line-height:1.55;border:1px solid}
+.resp-block.learner{background:#FFF8F2;border-color:#F7E5CF;color:var(--ink-700)}
+.resp-block.model{background:#EEF8FB;border-color:#C7E4EC;color:var(--ink-700)}
+.resp-block .rb-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.resp-block.learner .rb-head{color:var(--warn-700)}
+.resp-block.model .rb-head{color:var(--brand-600)}
+.resp-block .rb-head::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.resp-diff{margin-top:12px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--line-soft);border-radius:9px;font-size:12.5px;color:var(--ink-700)}
+.resp-diff svg{color:var(--brand-600);flex-shrink:0}
+
+/* ===== Section 4: Evaluation Criteria ===== */
+.rubric-table{display:flex;flex-direction:column;gap:8px}
+.rubric-row{display:grid;grid-template-columns:1.4fr 1.4fr 0.85fr 0.45fr;gap:18px;align-items:center;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;transition:all .15s}
+.rubric-row:hover{background:#FAFBFD;border-color:var(--brand-200)}
+.rubric-row.head{background:transparent;border:none;padding:6px 16px 4px;font-size:11.5px;font-weight:700;color:var(--ink-400);letter-spacing:.07em;text-transform:uppercase}
+.rubric-row.head:hover{background:transparent}
+.rb-name{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--ink-900);font-size:13.5px}
+.rb-name .ico{width:30px;height:30px;border-radius:8px;background:var(--brand-50);color:var(--brand-700);display:grid;place-items:center;flex-shrink:0;border:1px solid var(--brand-100)}
+.rb-bar{position:relative;height:10px;border-radius:5px;background:var(--line-soft);overflow:visible}
+.rb-bar .fill{position:absolute;left:0;top:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#277AB1,#4870C1)}
+.rb-bar .marker{position:absolute;top:-3px;width:2px;height:16px;background:var(--ink-900);border-radius:1px}
+.rb-bar .marker::after{content:"";position:absolute;top:-4px;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--ink-900);border:2px solid #fff;box-shadow:0 0 0 1px var(--ink-900)}
+.rb-scores{display:flex;gap:14px;align-items:center;font-size:12.5px}
+.rb-scores .ai{color:var(--ink-500)}
+.rb-scores .ai b{color:var(--ink-900);font-family:'Quicksand',sans-serif;font-weight:600;font-size:15px;margin-left:2px}
+.rb-scores .you{color:var(--brand-600)}
+.rb-scores .you b{color:var(--brand-700);font-family:'Quicksand',sans-serif;font-weight:600;font-size:15px;margin-left:2px}
+.rb-input{display:flex;align-items:center;gap:6px;border:1.5px solid var(--brand-500);background:var(--brand-50);border-radius:9px;padding:5px 10px;width:fit-content;justify-self:end}
+.rb-input input{border:none;background:transparent;font-family:'Quicksand',sans-serif;font-weight:600;font-size:15px;color:var(--brand-700);width:32px;text-align:right;outline:none}
+.rb-input span{font-size:12px;color:var(--ink-400)}
+.delta{font-size:11px;font-weight:600;padding:2px 6px;border-radius:5px;margin-left:6px}
+.delta.same{background:var(--miss-100);color:var(--miss-700)}
+.delta.up{background:var(--ok-100);color:var(--ok-700)}
+.delta.down{background:var(--warn-100);color:var(--warn-700)}
+
+.rubric-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:18px;border-top:1px dashed var(--line)}
+.rubric-summary{font-size:13px;color:var(--ink-500)}
+.rubric-summary b{color:var(--ink-900);font-weight:600}
+
+/* ===== Section 5: Instructor Feedback ===== */
+.fb-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{font-size:12px;font-weight:500;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink-700);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--brand-500);color:var(--brand-700);background:var(--brand-50)}
+.chip svg{opacity:.6}
+.fb-textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;font-family:inherit;font-size:14px;color:var(--ink-900);min-height:120px;resize:vertical;transition:border-color .15s;background:#FAFBFD;line-height:1.55}
+.fb-textarea:focus{outline:none;border-color:var(--brand-500);background:#fff}
+.fb-textarea::placeholder{color:var(--ink-400)}
+.fb-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--ink-400)}
+
+/* Bottom CTA bar */
+.cta-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:16px 22px;margin-top:8px;box-shadow:var(--shadow-sm);
+  position:sticky;bottom:18px;
+}
+.cta-info{display:flex;align-items:center;gap:14px}
+.cta-info .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#277AB1,#142648);display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.cta-info .meta{font-size:13px;color:var(--ink-500)}
+.cta-info .meta b{color:var(--ink-900);font-weight:600;display:block;font-size:13.5px}
+.cta-actions{display:flex;gap:10px}
+
+/* Accessibility focus */
+button:focus-visible,.toc-item:focus-visible,.chip:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+
+</style>
+</head>
+<body>
+
+<div class="chrome">
+<div class="window">
+
+  <!-- Browser titlebar mock -->
+  <div class="titlebar">
+    <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+    <div class="tab">Review &amp; Finalize Assessment</div>
+    <div class="urlbar">app.lensassess.com/review/empathetic-comm</div>
+  </div>
+
+<div class="app">
+
+  <!-- Left rail sidebar (kept as-is) -->
+  <aside class="sidebar">
+    <div class="logo">L</div>
+    <div class="side-btn active" title="New"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+    <div class="side-btn" title="Dashboard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+    <div class="side-spacer"></div>
+    <div class="side-btn" title="Theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+    <div class="side-btn" title="Logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div>
+        <h1 class="h-title">Review &amp; Finalize Assessment Results</h1>
+        <p class="h-sub">Confirm the AI-generated evaluation, adjust scoring where needed, and add your feedback before sending the report to the learner.</p>
+        <div class="skill-pill">
+          <span class="dot-acc"></span>
+          <span class="label">Skill Focus</span>
+          <span>·</span>
+          <span>Empathetic Patient Communication</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Download Report
+      </button>
+    </div>
+
+    <div class="layout">
+
+      <!-- TOC -->
+      <nav class="toc">
+        <div class="toc-item active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M8 8h8M8 16h5"/></svg>
+          Summary
+        </div>
+        <div class="toc-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Learner Response
+        </div>
+        <div class="toc-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 14h6M9 18h6M9 10h1"/></svg>
+          Evaluation Criteria
+        </div>
+        <div class="toc-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 11.08V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6"/><path d="M14 3v5h5M18 21v-6M15 18l3 3 3-3"/></svg>
+          Instructor Feedback
+        </div>
+      </nav>
+
+      <!-- Right content -->
+      <div>
+
+        <!-- ============= SECTION 1: EVALUATION SUMMARY ============= -->
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="icon-chip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+              </div>
+              Evaluation Summary
+            </div>
+          </div>
+          <p class="card-sub">A snapshot of overall performance across communication competencies and the LENS thinking framework.</p>
+
+          <div class="eval-grid">
+            <!-- Score Card -->
+            <div class="score-card">
+              <div class="sc-label">Overall Score</div>
+              <div class="sc-flex">
+                <div class="gauge">
+                  <svg width="128" height="128">
+                    <circle class="track" cx="64" cy="64" r="54" stroke-width="9" fill="none"/>
+                    <circle class="fill" cx="64" cy="64" r="54" stroke-width="9" fill="none"
+                      stroke-dasharray="339.292" stroke-dashoffset="88.2"/>
+                  </svg>
+                  <div class="num"><b>7.4</b><span>OUT OF 10</span></div>
+                </div>
+                <div class="sc-meta">
+                  <div class="level">Proficiency Level</div>
+                  <div class="badge">Proficient</div>
+                </div>
+              </div>
+              <div class="sc-bench">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <span><b>+0.6 above</b> cohort average (6.8) · Top 32% in your batch</span>
+              </div>
+              <div class="sc-narrative">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD7A8" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                <div>The learner shows strong empathic communication with clear potential for growth in transferring frameworks across scenarios.</div>
+              </div>
+            </div>
+
+            <!-- Strengths + Development -->
+            <div class="dual">
+              <div class="note-block">
+                <div class="nb-head">
+                  <div class="nb-icon ok">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><path d="M5 11h14v10H5z"/></svg>
+                  </div>
+                  <div class="nb-title">Key Strengths</div>
+                  <span class="nb-count">3</span>
+                </div>
+                <ul class="nb-list">
+                  <li>Maintained a calm, supportive tone throughout all four scenarios.</li>
+                  <li>Recognised emotional cues early and responded empathetically.</li>
+                  <li>Used inclusive language appropriate for diverse cultural contexts.</li>
+                </ul>
+              </div>
+              <div class="note-block">
+                <div class="nb-head">
+                  <div class="nb-icon dev">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                  </div>
+                  <div class="nb-title">Development Areas</div>
+                  <span class="nb-count">2</span>
+                </div>
+                <ul class="nb-list dev">
+                  <li>Reflection phase lacked depth on alternative approaches.</li>
+                  <li>Could more clearly articulate the intended outcome during the &ldquo;Task&rdquo; phase.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============= SECTION 2: LENS EVALUATION (REDESIGNED) ============= -->
+        <section class="card lens-section">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="icon-chip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
+              </div>
+              LENS Thinking Framework
+            </div>
+            <button class="btn btn-ghost" style="padding:7px 12px;font-size:12px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              About LENS
+            </button>
+          </div>
+
+          <!-- Intro strip explaining what LENS is + summary -->
+          <div class="lens-intro">
+            <div class="lens-intro-text">
+              <h4>What is LENS? <span class="tip">FRAMEWORK</span></h4>
+              <p>LENS evaluates four higher-order thinking moves the learner demonstrated — beyond just answering correctly. Each dimension is marked as <b style="color:var(--ok-700)">Strong</b>, <b style="color:var(--warn-700)">Emerging</b>, or <b style="color:var(--miss-700)">Not observed</b> based on transcript evidence.</p>
+            </div>
+            <div class="lens-summary">
+              <div class="ring">
+                <span>3<small style="font-size:9px">/4</small></span>
+              </div>
+              <div class="lens-stack">
+                <b>Demonstrated</b>
+                <span>3 strong · 1 emerging</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2x2 LENS cards -->
+          <div class="lens-grid">
+
+            <!-- Logic & Evidence -->
+            <div class="lens-card logic">
+              <div class="accent"></div>
+              <div class="lens-top">
+                <div class="lens-meta">
+                  <div class="lens-ico">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div>
+                    <div class="lens-name"><small>L · Dimension 01</small>Logic &amp; Evidence</div>
+                  </div>
+                </div>
+                <span class="status strong">Strong</span>
+              </div>
+              <p class="lens-def">Whether responses are grounded in clear reasoning, observable cues, and verifiable steps rather than assumption.</p>
+              <div class="lens-evidence">
+                <span class="ev-label">EVIDENCE</span>
+                <p>Strong reasoning observed across Q1 and Q3 — the learner cited specific patient cues before proposing a next step.</p>
+              </div>
+              <div class="lens-foot">
+                <span class="lens-link">View in transcript
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </span>
+                <span class="lens-source">Source: <b>Q1, Q3</b></span>
+              </div>
+            </div>
+
+            <!-- Extension or Transfer -->
+            <div class="lens-card extend">
+              <div class="accent"></div>
+              <div class="lens-top">
+                <div class="lens-meta">
+                  <div class="lens-ico">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7"/><path d="M5 16l-3 3 3 3M2 19h9"/></svg>
+                  </div>
+                  <div>
+                    <div class="lens-name"><small>E · Dimension 02</small>Extension or Transfer</div>
+                  </div>
+                </div>
+                <span class="status emerging">Emerging</span>
+              </div>
+              <p class="lens-def">Whether the learner applies a principle from one scenario to a meaningfully different one.</p>
+              <div class="lens-evidence">
+                <span class="ev-label">EVIDENCE</span>
+                <p>Ideas appeared across different scenarios, but the underlying principles weren't named or carried forward explicitly.</p>
+              </div>
+              <div class="lens-foot">
+                <span class="lens-link">View in transcript
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </span>
+                <span class="lens-source">Source: <b>Q2, Q4</b></span>
+              </div>
+            </div>
+
+            <!-- Novel Moves -->
+            <div class="lens-card novel">
+              <div class="accent"></div>
+              <div class="lens-top">
+                <div class="lens-meta">
+                  <div class="lens-ico">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg>
+                  </div>
+                  <div>
+                    <div class="lens-name"><small>N · Dimension 03</small>Novel Moves</div>
+                  </div>
+                </div>
+                <span class="status strong">Strong</span>
+              </div>
+              <p class="lens-def">Whether the learner attempted an original approach rather than relying solely on the trained pattern.</p>
+              <div class="lens-evidence">
+                <span class="ev-label">EVIDENCE</span>
+                <p>Tried a fresh framing in Q3 — offered to coordinate directly with the pharmacist rather than deferring the conversation.</p>
+              </div>
+              <div class="lens-foot">
+                <span class="lens-link">View in transcript
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </span>
+                <span class="lens-source">Source: <b>Q3</b></span>
+              </div>
+            </div>
+
+            <!-- Self Regulation -->
+            <div class="lens-card self">
+              <div class="accent"></div>
+              <div class="lens-top">
+                <div class="lens-meta">
+                  <div class="lens-ico">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  </div>
+                  <div>
+                    <div class="lens-name"><small>S · Dimension 04</small>Self Regulation</div>
+                  </div>
+                </div>
+                <span class="status strong">Strong</span>
+              </div>
+              <p class="lens-def">Whether the learner maintained composure, paced themselves, and adapted tone under pressure.</p>
+              <div class="lens-evidence">
+                <span class="ev-label">EVIDENCE</span>
+                <p>Maintained calm pacing on video throughout — no rushing, no defensive shifts when the patient pressed back.</p>
+              </div>
+              <div class="lens-foot">
+                <span class="lens-link">View in transcript
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </span>
+                <span class="lens-source">Source: <b>Video, 0:42–1:08</b></span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============= SECTION 3: HOW THE LEARNER RESPONDED ============= -->
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="icon-chip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              </div>
+              How the Learner Responded
+            </div>
+            <button class="btn btn-ghost" style="padding:8px 14px;font-size:13px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Full Transcript
+            </button>
+          </div>
+
+          <div class="resp-grid">
+            <!-- Video -->
+            <div>
+              <div class="video-wrap">
+                <img class="video-img" src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=600&q=80" alt="Learner video"
+                  onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#142648,#277AB1)'">
+                <div class="video-overlay"></div>
+                <div class="play-btn">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#0B1722"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </div>
+                <div class="video-meta">
+                  <span class="name">Daniel R. · Submission</span>
+                  <span class="time">0:00 / 1:23</span>
+                </div>
+              </div>
+              <div class="video-chapters">
+                <div class="chapter active">
+                  <span class="ch-name">Q1 · Wrong dosage</span>
+                  <span class="ch-time">0:00</span>
+                </div>
+                <div class="chapter">
+                  <span class="ch-name">Q2 · Missing appointment</span>
+                  <span class="ch-time">0:24</span>
+                </div>
+                <div class="chapter">
+                  <span class="ch-name">Q3 · Confused patient</span>
+                  <span class="ch-time">0:48</span>
+                </div>
+                <div class="chapter">
+                  <span class="ch-name">Q4 · Dosage follow-up</span>
+                  <span class="ch-time">1:06</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Questions -->
+            <div class="q-list">
+
+              <div class="q-card open">
+                <div class="q-head">
+                  <div class="q-num">01</div>
+                  <div class="q-text">A patient complains about receiving the wrong dosage of medication. How do you respond?</div>
+                  <div class="q-tags">
+                    <span class="tag t-logic">L</span>
+                    <span class="tag t-self">S</span>
+                  </div>
+                  <div class="q-score">7.2<small>/10</small></div>
+                  <div class="q-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+                <div class="q-body">
+                  <div class="resp-compare">
+                    <div class="resp-block learner">
+                      <div class="rb-head">Learner Response</div>
+                      Wait, really? Are you sure it was the wrong dose? Let me check… I'll ask the pharmacist or someone about it.
+                    </div>
+                    <div class="resp-block model">
+                      <div class="rb-head">Model Response</div>
+                      I'm really sorry to hear that. Let me immediately check your records and coordinate with the pharmacist to ensure you're safe and the issue is resolved.
+                    </div>
+                  </div>
+                  <div class="resp-diff">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span><b>Coaching note:</b> The learner reached for verification, which is correct — but missed leading with empathy and ownership of the resolution.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-head">
+                  <div class="q-num">02</div>
+                  <div class="q-text">A patient arrives for a follow-up but their appointment isn't in the system. They are frustrated.</div>
+                  <div class="q-tags">
+                    <span class="tag t-extend">E</span>
+                    <span class="tag t-self">S</span>
+                  </div>
+                  <div class="q-score">7.6<small>/10</small></div>
+                  <div class="q-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-head">
+                  <div class="q-num">03</div>
+                  <div class="q-text">An elderly patient appears confused and asks the same question multiple times.</div>
+                  <div class="q-tags">
+                    <span class="tag t-logic">L</span>
+                    <span class="tag t-novel">N</span>
+                    <span class="tag t-self">S</span>
+                  </div>
+                  <div class="q-score">8.1<small>/10</small></div>
+                  <div class="q-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-head">
+                  <div class="q-num">04</div>
+                  <div class="q-text">A patient complains about receiving the wrong dosage of medication. How do you respond?</div>
+                  <div class="q-tags">
+                    <span class="tag t-extend">E</span>
+                  </div>
+                  <div class="q-score">6.7<small>/10</small></div>
+                  <div class="q-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ============= SECTION 4: EVALUATION CRITERIA ============= -->
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="icon-chip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              Evaluation Criteria
+            </div>
+            <span style="font-size:12px;color:var(--ink-500);display:flex;align-items:center;gap:6px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              You can override any AI score
+            </span>
+          </div>
+
+          <div class="rubric-table">
+            <div class="rubric-row head">
+              <span>Rubric</span>
+              <span>Performance Distribution</span>
+              <span>AI / Your Score</span>
+              <span style="text-align:right">Override</span>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rb-name">
+                <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+                Problem Analysis
+              </div>
+              <div class="rb-bar"><div class="fill" style="width:74%"></div><div class="marker" style="left:74%"></div></div>
+              <div class="rb-scores"><span class="ai">AI<b>7.4</b></span><span class="delta same">Same</span></div>
+              <div class="rb-input"><input value="7.4"><span>/10</span></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rb-name">
+                <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/></svg></div>
+                Solution Design
+              </div>
+              <div class="rb-bar"><div class="fill" style="width:72%"></div><div class="marker" style="left:72%"></div></div>
+              <div class="rb-scores"><span class="ai">AI<b>7.2</b></span><span class="delta same">Same</span></div>
+              <div class="rb-input"><input value="7.2"><span>/10</span></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rb-name">
+                <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></div>
+                Articulation of Technical Concepts
+              </div>
+              <div class="rb-bar"><div class="fill" style="width:64%;background:linear-gradient(90deg,#A06813,#C58A2E)"></div><div class="marker" style="left:64%"></div></div>
+              <div class="rb-scores"><span class="ai">AI<b>6.4</b></span><span class="delta same">Same</span></div>
+              <div class="rb-input"><input value="6.4"><span>/10</span></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rb-name">
+                <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                Stakeholder Communication
+              </div>
+              <div class="rb-bar"><div class="fill" style="width:91%;background:linear-gradient(90deg,#258A58,#3FB17A)"></div><div class="marker" style="left:91%"></div></div>
+              <div class="rb-scores"><span class="ai">AI<b>9.1</b></span><span class="delta same">Same</span></div>
+              <div class="rb-input"><input value="9.1"><span>/10</span></div>
+            </div>
+
+            <div class="rubric-row">
+              <div class="rb-name">
+                <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>
+                Adaptability &amp; Responsiveness
+              </div>
+              <div class="rb-bar"><div class="fill" style="width:81%;background:linear-gradient(90deg,#258A58,#3FB17A)"></div><div class="marker" style="left:81%"></div></div>
+              <div class="rb-scores"><span class="ai">AI<b>8.1</b></span><span class="delta same">Same</span></div>
+              <div class="rb-input"><input value="8.1"><span>/10</span></div>
+            </div>
+          </div>
+
+          <div class="rubric-foot">
+            <div class="rubric-summary">
+              Weighted average: <b>7.4 / 10</b> · Five criteria scored · All AI scores accepted
+            </div>
+            <button class="btn btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Recalculate Score
+            </button>
+          </div>
+        </section>
+
+        <!-- ============= SECTION 5: INSTRUCTOR FEEDBACK ============= -->
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="icon-chip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-6 0v4M5 9h14l1 11H4z"/></svg>
+              </div>
+              Instructor Feedback
+            </div>
+            <span style="font-size:12px;color:var(--ink-400);display:flex;align-items:center;gap:6px">
+              Sent privately to Daniel
+            </span>
+          </div>
+          <p class="card-sub">Add specific strengths, suggestions, or next steps. The learner sees this verbatim.</p>
+
+          <div class="fb-chips">
+            <button class="chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              Acknowledge a strength
+            </button>
+            <button class="chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Highlight an area to develop
+            </button>
+            <button class="chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              Suggest a next step
+            </button>
+            <button class="chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Reference a specific moment
+            </button>
+          </div>
+
+          <textarea class="fb-textarea" placeholder="Share specific strengths, suggestions, or next steps for Daniel. Mention specific moments in the transcript with @Q1, @Q2, etc."></textarea>
+          <div class="fb-foot">
+            <span>Tip: Reference scenarios with @Q1, @Q3 to deep-link your learner to the exact moment.</span>
+            <span>0 / 800</span>
+          </div>
+        </section>
+
+        <!-- Sticky CTA bar -->
+        <div class="cta-bar">
+          <div class="cta-info">
+            <div class="av">DR</div>
+            <div class="meta">
+              <b>Daniel Rodriguez</b>
+              Empathetic Patient Communication · Submitted May 24
+            </div>
+          </div>
+          <div class="cta-actions">
+            <button class="btn btn-ghost">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back to Learner Experience
+            </button>
+            <button class="btn btn-primary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+              Finalise &amp; Send Assessment
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</div>
+</div>
+
+<script>
+// Simple accordion for question cards
+document.querySelectorAll('.q-head').forEach(head=>{
+  head.addEventListener('click',()=>{
+    const card = head.parentElement;
+    document.querySelectorAll('.q-card').forEach(c=>{if(c!==card)c.classList.remove('open')});
+    card.classList.toggle('open');
+  });
+});
+
+// Chip → focus textarea with template
+const templates = {
+  'Acknowledge a strength':'I want to highlight your strength in ',
+  'Highlight an area to develop':'One area to develop further is ',
+  'Suggest a next step':'For your next assessment, try ',
+  'Reference a specific moment':'In @Q'
+};
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    const ta = document.querySelector('.fb-textarea');
+    const label = chip.innerText.trim();
+    const tpl = templates[label] || '';
+    ta.value = (ta.value ? ta.value + '\n\n' : '') + tpl;
+    ta.focus();
+  });
+});
+
+// TOC active state on click
+document.querySelectorAll('.toc-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.toc-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
