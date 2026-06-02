@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Report Card — Illuminate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef2f8;
+    --card:#ffffff;
+    --navy:#16233d;
+    --ink:#26324a;
+    --slate:#6b7894;
+    --faint:#9aa6bd;
+    --border:#e8edf5;
+    --line-soft:#eef2f8;
+    --blue:#2f6bf6;
+    --blue-soft:#eaf1ff;
+    --teal:#0fae9e;
+    --teal-2:#34c98a;
+    --teal-soft:#e3f6f3;
+    --green:#2faa6a;
+    --green-soft:#e4f5ec;
+    --amber:#cf8f24;
+    --amber-soft:#fbf0d8;
+    --cream:#fdf4e6;
+    --cream-line:#f1e2c9;
+    --ice:#f1f6fd;
+    --shadow:0 1px 2px rgba(22,35,61,.04),0 22px 48px -30px rgba(22,35,61,.4);
+    --shadow-sm:0 1px 2px rgba(22,35,61,.05),0 10px 24px -18px rgba(22,35,61,.35);
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1000px 540px at 88% -8%, #e6eefc 0%, transparent 58%),
+      radial-gradient(800px 480px at 0% 12%, #e9f6f3 0%, transparent 55%),
+      var(--bg);
+    padding:30px 18px 70px;
+  }
+  .wrap{max-width:1040px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);}
+  .pad{padding:26px 28px}
+
+  /* ============ BRAND HEADER ============ */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    background:linear-gradient(140deg,var(--teal),var(--teal-2));box-shadow:0 8px 18px -8px rgba(15,174,158,.7)}
+  .logo svg{width:23px;height:23px;color:#fff}
+  .brand .wm{font-size:21px;font-weight:800;letter-spacing:-.5px;color:var(--navy)}
+  .brand .wm span{color:var(--teal)}
+  .brand .tl{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:1px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font);font-size:13.5px;font-weight:700;cursor:pointer;border-radius:11px;padding:11px 16px;border:1px solid transparent;transition:.15s;text-decoration:none}
+  .btn svg{width:16px;height:16px}
+  .btn-line{background:#fff;border-color:var(--border);color:var(--navy)}
+  .btn-line:hover{border-color:#cfe0ff;background:var(--blue-soft);color:var(--blue)}
+  .btn-grad{background:linear-gradient(135deg,var(--blue),#5b86ff);color:#fff;box-shadow:0 10px 22px -10px rgba(47,107,246,.8)}
+  .btn-grad:hover{filter:brightness(1.05)}
+
+  /* ============ HERO / TITLE ============ */
+  .hero{padding:28px 30px}
+  .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--teal-soft);color:#0a7d72;font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px}
+  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--teal)}
+  h1{font-size:33px;font-weight:800;letter-spacing:-.8px;color:var(--navy);margin:12px 0 4px}
+  .hero p{color:var(--slate);font-size:14px;max-width:60ch}
+  .student{margin-top:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .student .f{background:#fff;padding:14px 16px}
+  .student .lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .student .val{font-size:15px;font-weight:700;color:var(--navy);margin-top:4px}
+
+  /* ============ NAV PILLS ============ */
+  .nav-pills{position:sticky;top:14px;z-index:20;display:flex;gap:8px;background:rgba(255,255,255,.78);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:14px;padding:7px;margin:18px 0;box-shadow:var(--shadow-sm);overflow-x:auto}
+  .nav-pills a{flex:none;font-size:13px;font-weight:700;color:var(--slate);text-decoration:none;padding:9px 15px;border-radius:9px;transition:.15s;white-space:nowrap}
+  .nav-pills a:hover{color:var(--navy);background:var(--line-soft)}
+  .nav-pills a.on{color:#fff;background:var(--navy)}
+
+  /* ============ SECTION SHELL ============ */
+  section{scroll-margin-top:78px;margin-bottom:18px}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .sec-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none}
+  .sec-ic svg{width:20px;height:20px}
+  .ic-teal{background:var(--teal-soft);color:var(--teal)} .ic-blue{background:var(--blue-soft);color:var(--blue)}
+  .ic-green{background:var(--green-soft);color:var(--green)} .ic-amber{background:var(--amber-soft);color:var(--amber)}
+  .sec-head h2{font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+  .sec-head .cap{font-size:13px;color:var(--slate);font-weight:500;margin-top:1px}
+  .sec-head .spacer{flex:1}
+  .ai-note{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--slate)}
+  .ai-note svg{width:14px;height:14px;color:var(--teal)}
+
+  /* ============ EVAL SUMMARY ============ */
+  .summary-grid{display:grid;grid-template-columns:300px 1fr;gap:22px}
+  .score-box{background:linear-gradient(180deg,#f6f9ff,#fff);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center}
+  .donut{position:relative;width:148px;height:148px;margin:4px auto 8px}
+  .donut svg{transform:rotate(-90deg)}
+  .donut .ctr{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .donut .num{font-size:30px;font-weight:800;color:var(--navy);line-height:1}
+  .donut .num b{font-size:14px;color:var(--faint);font-weight:700}
+  .donut .lab{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:3px}
+  .prof{display:inline-flex;align-items:center;gap:7px;background:var(--green-soft);color:var(--green);font-size:12.5px;font-weight:800;padding:7px 14px;border-radius:999px}
+  .prof .d{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .grade-letter{font-size:13px;color:var(--slate);font-weight:600;margin-top:12px}
+  .grade-letter b{color:var(--navy);font-size:18px;font-weight:800}
+
+  .lists{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .lcol h3{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;color:var(--navy);margin-bottom:12px}
+  .lcol h3 .b{font-size:11px;font-weight:800;color:#fff;border-radius:7px;width:22px;height:22px;display:grid;place-items:center}
+  .b-green{background:var(--green)} .b-amber{background:var(--amber)}
+  .lcol ol{list-style:none}
+  .lcol li{position:relative;padding:9px 0 9px 26px;font-size:13.5px;color:var(--ink);border-bottom:1px solid var(--line-soft)}
+  .lcol li:last-child{border-bottom:none}
+  .lcol li::before{content:"";position:absolute;left:6px;top:16px;width:7px;height:7px;border-radius:50%}
+  .lcol.s li::before{background:var(--green)} .lcol.g li::before{background:var(--amber)}
+
+  /* ============ LENS ============ */
+  .lens-intro{font-size:13.5px;color:var(--slate);margin-bottom:16px;max-width:74ch;line-height:1.6}
+  .lens-intro b{color:var(--navy)}
+  .lens-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .lens{border:1px solid var(--border);border-radius:14px;padding:16px 18px;background:linear-gradient(180deg,#fbfdff,#fff);transition:.18s}
+  .lens:hover{border-color:#d8e3f5;box-shadow:var(--shadow-sm)}
+  .lens-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .lens .k{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .lens h4{font-size:15.5px;font-weight:800;color:var(--navy);margin-top:3px}
+  .badge{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px;white-space:nowrap}
+  .bStrong{background:var(--green-soft);color:var(--green)}
+  .bEmerging{background:var(--amber-soft);color:var(--amber)}
+  .lens .ev{margin-top:12px;font-size:12.5px;color:var(--slate);background:var(--line-soft);border-radius:10px;padding:10px 12px;line-height:1.55}
+  .lens .ev em{display:block;font-style:normal;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+
+  /* ============ RESPONSE (video + QA) ============ */
+  .resp-grid{display:grid;grid-template-columns:382px 1fr;gap:24px;align-items:start}
+  .player{position:relative;border-radius:18px;overflow:hidden;background:#0c1424;aspect-ratio:4/4.7;box-shadow:0 18px 30px -20px rgba(12,20,36,.55)}
+  .player video{width:100%;height:100%;object-fit:cover;display:block}
+  .poster-note{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:#cdd6e8;font-size:13px;padding:30px;background:linear-gradient(160deg,#1a2740,#0c1424)}
+  .vfade{position:absolute;left:0;right:0;bottom:0;height:128px;background:linear-gradient(transparent,rgba(8,14,26,.82));pointer-events:none}
+  .big-play{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,14,26,.18);cursor:pointer;transition:.25s;border:0}
+  .big-play.hide{opacity:0;pointer-events:none}
+  .big-play span{width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.94);display:grid;place-items:center;box-shadow:0 8px 26px rgba(0,0,0,.35);transition:transform .2s}
+  .big-play:hover span{transform:scale(1.07)}
+  .big-play span svg{width:25px;height:25px;color:var(--navy);margin-left:3px}
+  .now{position:absolute;top:13px;left:13px;display:flex;align-items:center;gap:7px;background:rgba(12,20,36,.55);backdrop-filter:blur(6px);color:#fff;font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:999px;max-width:84%}
+  .now .pulse{width:7px;height:7px;border-radius:50%;background:#36d399;flex:none;animation:pp 1.6s infinite}
+  @keyframes pp{0%{box-shadow:0 0 0 0 rgba(54,211,153,.55)}70%{box-shadow:0 0 0 7px rgba(54,211,153,0)}100%{box-shadow:0 0 0 0 rgba(54,211,153,0)}}
+  .now .qn{color:#7fe3ff;font-weight:800}
+  .ctrls{position:absolute;left:0;right:0;bottom:0;padding:0 14px 12px;color:#fff}
+  .seek{position:relative;height:18px;display:flex;align-items:center;cursor:pointer;margin-bottom:4px}
+  .seek .track{position:absolute;left:0;right:0;height:5px;border-radius:999px;background:rgba(255,255,255,.25)}
+  .seek .fill{position:absolute;left:0;height:5px;border-radius:999px;background:var(--blue);width:0%}
+  .seek .knob{position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transform:translateX(-50%);left:0%;transition:left .08s linear}
+  .seek .mark{position:absolute;top:50%;transform:translate(-50%,-50%);width:3px;height:13px;border-radius:2px;background:rgba(255,255,255,.7);transition:.2s}
+  .seek .mark.on{background:#ffd479;height:17px}
+  .cbar{display:flex;align-items:center;gap:13px;font-size:12px;font-weight:600}
+  .cbtn{background:none;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;padding:3px;border-radius:7px;transition:.15s}
+  .cbtn:hover{background:rgba(255,255,255,.16)}
+  .cbtn svg{width:18px;height:18px}
+  .time{font-variant-numeric:tabular-nums;color:#e7edf8}
+  .time .sl{opacity:.55;margin:0 3px}
+  .spacer-c{flex:1}
+  .panel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .qcount{font-size:13px;color:var(--slate);font-weight:600}.qcount b{color:var(--navy)}
+  .navq{display:flex;gap:8px}
+  .navq button{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--blue);cursor:pointer;display:grid;place-items:center;transition:.15s}
+  .navq button:hover:not(:disabled){background:var(--blue-soft);border-color:#d6e3ff}
+  .navq button:disabled{color:var(--faint);opacity:.55;cursor:not-allowed}
+  .navq svg{width:16px;height:16px}
+  .qlist{display:flex;flex-direction:column;gap:11px}
+  .q{border:1px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;transition:.2s}
+  .q.active{border-color:#cfe0ff;box-shadow:0 10px 26px -18px rgba(47,107,246,.55)}
+  .q.playing{background:linear-gradient(0deg,#fff,#fbfdff)}
+  .qhead{display:flex;align-items:flex-start;gap:12px;padding:14px 15px;cursor:pointer}
+  .qmeta{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:1px}
+  .qtag{font-size:11px;font-weight:800;color:var(--blue);background:var(--blue-soft);border-radius:7px;padding:3px 8px}
+  .qtime{font-size:10.5px;font-weight:700;color:var(--faint);font-variant-numeric:tabular-nums}
+  .qtxt{flex:1;font-size:14px;font-weight:600;color:var(--navy);line-height:1.45;padding-top:2px}
+  .chev{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;transition:.2s}
+  .chev svg{width:16px;height:16px;transition:transform .25s}
+  .q.active .chev{background:var(--blue);color:#fff}
+  .q.active .chev svg{transform:rotate(90deg)}
+  .qplay{display:none;align-items:center;gap:6px;font-size:10.5px;font-weight:800;color:var(--teal);margin-top:5px}
+  .q.playing .qplay{display:inline-flex}
+  .qplay .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pp 1.6s infinite}
+  .qbody{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .q.active .qbody{max-height:480px}
+  .qbody-in{padding:2px 15px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .resp-b{border-radius:12px;padding:13px 14px;font-size:13px;line-height:1.55;color:var(--ink)}
+  .resp-b.learner{background:var(--cream);border:1px solid var(--cream-line)}
+  .resp-b.model{background:var(--ice);border:1px solid #e1ecfa}
+  .rlabel{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  .rlabel .d{width:8px;height:8px;border-radius:50%}
+  .resp-b.learner .rlabel{color:var(--amber)}.resp-b.learner .d{background:#e6a13c}
+  .resp-b.model .rlabel{color:var(--teal)}.resp-b.model .d{background:var(--teal)}
+  .dots{display:flex;justify-content:center;gap:8px;margin-top:18px}
+  .dots button{width:8px;height:8px;border-radius:50%;border:0;background:#d3dbe9;cursor:pointer;transition:.2s;padding:0}
+  .dots button.on{background:var(--navy);width:22px;border-radius:999px}
+
+  /* ============ RUBRIC TABLE ============ */
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:0 14px 12px;border-bottom:1.5px solid var(--border)}
+  thead th.c{text-align:center}
+  tbody td{padding:15px 14px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+  tbody tr{transition:.15s}
+  tbody tr:hover{background:#f8faff}
+  .subj{display:flex;align-items:center;gap:12px}
+  .subj .si{width:34px;height:34px;border-radius:10px;background:var(--line-soft);color:var(--slate);display:grid;place-items:center;flex:none}
+  .subj .si svg{width:17px;height:17px}
+  .subj .t{font-size:14.5px;font-weight:700;color:var(--navy)}
+  .subj .t small{display:block;font-size:11.5px;font-weight:500;color:var(--faint);margin-top:1px}
+  td.sc{font-size:16px;font-weight:800;color:var(--navy);text-align:center;font-variant-numeric:tabular-nums}
+  td.sc b{font-size:11px;color:var(--faint);font-weight:600}
+  .gchip{display:inline-grid;place-items:center;min-width:40px;height:32px;padding:0 8px;margin:0 auto;font-size:14px;font-weight:800;border-radius:9px}
+  .gA{background:var(--green-soft);color:var(--green)} .gB{background:var(--blue-soft);color:var(--blue)} .gC{background:var(--amber-soft);color:var(--amber)}
+  .rmk{font-size:13px;color:var(--slate)}
+  .wavg{display:flex;align-items:center;justify-content:flex-end;gap:18px;padding:18px 14px 4px}
+  .wavg .lab{font-size:13px;color:var(--slate);font-weight:600}
+  .wavg .v{font-size:26px;font-weight:800;color:var(--navy)}
+  .wavg .v b{font-size:15px;color:var(--faint);font-weight:700}
+  /* editable override */
+  td.ovcell{text-align:center;position:relative}
+  .ov{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--border);border-radius:11px;padding:7px 11px;background:#fff;transition:.15s;justify-content:center}
+  .ov:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px var(--ring)}
+  .ov.edited{border-color:#b8cdff;background:var(--blue-soft)}
+  .ov input{width:34px;border:0;outline:0;background:none;font-family:var(--font);font-size:15px;font-weight:800;color:var(--navy);text-align:right;-moz-appearance:textfield}
+  .ov input::-webkit-outer-spin-button,.ov input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .ov .sfx{font-size:11px;font-weight:700;color:var(--faint)}
+  .rowreset{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--faint);cursor:pointer;padding:5px;border-radius:7px;display:none}
+  .rowreset:hover{color:var(--blue);background:var(--blue-soft)}
+  .rowreset svg{width:15px;height:15px}
+  tr.edited .rowreset{display:grid;place-items:center}
+  tr.edited{background:#f9fbff}
+  .gchip.changed{animation:pop .35s}
+  @keyframes pop{0%{transform:scale(.82);opacity:.4}100%{transform:scale(1);opacity:1}}
+  .crit-foot{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 14px 4px;margin-top:8px;border-top:1.5px solid var(--border)}
+  .crit-foot .spacer{flex:1}
+  .crit-foot .lab{font-size:13px;color:var(--slate);font-weight:600}
+  .crit-foot .v{font-size:24px;font-weight:800;color:var(--navy)}
+  .crit-foot .v b{font-size:14px;color:var(--faint);font-weight:700}
+  .reset-all{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:#fff;color:var(--slate);font-family:var(--font);font-size:12.5px;font-weight:700;border-radius:10px;padding:10px 13px;cursor:pointer;transition:.15s}
+  .reset-all:hover{color:var(--navy);border-color:#cdd6e6;background:var(--line-soft)}
+  .reset-all svg{width:14px;height:14px}
+  #recalcBtn.pending{animation:nudge 1.4s ease-in-out infinite}
+  @keyframes nudge{0%,100%{box-shadow:0 10px 22px -10px rgba(47,107,246,.8)}50%{box-shadow:0 0 0 5px var(--ring),0 10px 22px -10px rgba(47,107,246,.8)}}
+  #recalcBtn.spin #recalcIc{animation:spin .6s ease}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .prof.amber{background:var(--amber-soft);color:var(--amber)} .prof.amber .d{background:var(--amber)}
+  .prof.red{background:#fdeceb;color:#d2473a} .prof.red .d{background:#d2473a}
+
+  /* ============ FEEDBACK ============ */
+  .comment{border:1px solid var(--border);border-radius:14px;padding:20px 22px;background:linear-gradient(180deg,#f9fbff,#fff);font-size:15px;line-height:1.7;color:var(--ink)}
+  .comment .qm{font-size:30px;color:var(--blue);line-height:0;vertical-align:-7px;margin-right:6px;font-weight:800}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .legend .lk{font-size:11px;font-weight:700;color:var(--slate);background:var(--line-soft);border-radius:8px;padding:6px 11px}
+  .legend .lk b{color:var(--navy)}
+  .signoff{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:flex-end}
+  .sig{border-top:2px solid var(--navy);padding-top:9px}
+  .sig .name{font-size:20px;font-weight:800;color:var(--blue);font-style:italic;margin-bottom:5px}
+  .sig .who{font-size:14px;font-weight:700;color:var(--navy)}
+  .sig .role{font-size:11.5px;color:var(--faint)}
+
+  .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:24px}
+
+  .foot{text-align:center;margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .foot .logo-sm{display:inline-flex;align-items:center;gap:6px;color:var(--teal);font-weight:800;text-transform:none;letter-spacing:0;font-size:13px}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:26px;translate:-50% 20px;background:var(--navy);color:#fff;font-size:13px;font-weight:600;padding:11px 18px;border-radius:11px;box-shadow:0 14px 34px -12px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index:50}
+  .toast.show{opacity:1;translate:-50% 0}
+
+  /* reveal */
+  section,.hero,.topbar{opacity:0;transform:translateY(14px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+  .hero{animation-delay:.05s} .nav-pills{animation:rise .6s .1s cubic-bezier(.2,.7,.2,1) backwards}
+  section:nth-of-type(1){animation-delay:.14s}section:nth-of-type(2){animation-delay:.2s}
+  section:nth-of-type(3){animation-delay:.26s}section:nth-of-type(4){animation-delay:.32s}
+  section:nth-of-type(5){animation-delay:.38s}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  @media(max-width:820px){
+    .pad,.hero{padding:22px}
+    h1{font-size:26px}
+    .student{grid-template-columns:1fr 1fr}
+    .summary-grid,.resp-grid{grid-template-columns:1fr}
+    .lists,.lens-grid,.qbody-in{grid-template-columns:1fr}
+    .player{aspect-ratio:16/11}
+    .signoff{grid-template-columns:1fr;gap:24px}
+    .topbar{flex-wrap:wrap}
+    .subj .si{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== BRAND TOPBAR ===== -->
+  <div class="topbar card">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18h6"/><path d="M10 22h4"/>
+          <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="wm">illumi<span>nate</span></div>
+        <div class="tl">Learner Assessment Suite</div>
+      </div>
+    </div>
+    <a class="btn btn-grad" href="#" onclick="toast('Generating report PDF…');return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+      Download Report
+    </a>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <div class="hero card">
+    <div class="hero-top">
+      <div>
+        <span class="chip"><span class="d"></span>Skill Focus · Empathetic Patient Communication</span>
+        <h1>Student Report Card</h1>
+        <p>A summary of performance across key communication competencies — reviewed, scored, and finalised for the learner.</p>
+      </div>
+    </div>
+    <div class="student">
+      <div class="f"><div class="lbl">Student</div><div class="val">Jordan A. Mensah</div></div>
+      <div class="f"><div class="lbl">Student ID</div><div class="val">STU-20418</div></div>
+      <div class="f"><div class="lbl">Term</div><div class="val">Term II · 2025–26</div></div>
+      <div class="f"><div class="lbl">Assessor</div><div class="val">Dr. P. Okafor</div></div>
+    </div>
+  </div>
+
+  <!-- ===== NAV PILLS ===== -->
+  <nav class="nav-pills" id="navPills">
+    <a href="#summary" class="on">Summary</a>
+    <a href="#response">Learner Response</a>
+    <a href="#criteria">Evaluation Criteria</a>
+    <a href="#feedback">Instructor Feedback</a>
+  </nav>
+
+  <!-- ===== EVALUATION SUMMARY ===== -->
+  <section id="summary">
+    <div class="card pad">
+      <div class="sec-head">
+        <span class="sec-ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span>
+        <div><h2>Evaluation Summary</h2><div class="cap">Overall standing across key communication competencies.</div></div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="score-box">
+          <div class="donut">
+            <svg width="148" height="148" viewBox="0 0 148 148">
+              <circle cx="74" cy="74" r="60" fill="none" stroke="#e9eef6" stroke-width="13"/>
+              <circle id="ring" cx="74" cy="74" r="60" fill="none" stroke="url(#gr)" stroke-width="13" stroke-linecap="round" stroke-dasharray="376.99" stroke-dashoffset="376.99"/>
+              <defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f6bf6"/><stop offset="1" stop-color="#0fae9e"/></linearGradient></defs>
+            </svg>
+            <div class="ctr"><div><div class="num" id="ovScore">7.4<b>/10</b></div><div class="lab">Score</div></div></div>
+          </div>
+          <div class="prof" id="ovProf"><span class="d"></span>Proficient</div>
+          <div class="grade-letter">Overall grade · <b id="ovGrade">B</b></div>
+        </div>
+
+        <div class="lists">
+          <div class="lcol s">
+            <h3><span class="b b-green">3</span>Key Strengths</h3>
+            <ol>
+              <li>Maintained a calm and supportive tone throughout.</li>
+              <li>Recognised emotional cues early and responded empathetically.</li>
+              <li>Used inclusive language appropriate for various cultural contexts.</li>
+            </ol>
+          </div>
+          <div class="lcol g">
+            <h3><span class="b b-amber">2</span>Development Areas</h3>
+            <ol>
+              <li>Reflection phase lacked depth on alternative approaches.</li>
+              <li>Could more clearly articulate the intended outcome during the “Task” phase.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LENS -->
+    <div class="card pad" style="margin-top:18px">
+      <div class="sec-head">
+        <span class="sec-ic ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 3v9l6 3"/></svg></span>
+        <div><h2>LENS Thinking Framework</h2><div class="cap">Higher-order thinking moves observed.</div></div>
+        <span class="spacer"></span>
+        <span class="ai-note"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9.2 8.6 2 9.3l5.5 4.7L5.8 21 12 17.3 18.2 21l-1.7-7 5.5-4.7-7.2-.7z"/></svg>3 of 4 Strong</span>
+      </div>
+      <p class="lens-intro"><b>LENS</b> evaluates four higher-order thinking moves the learner demonstrated — beyond just answering correctly. Each dimension is marked <b>Strong</b>, <b>Emerging</b>, or Not Observed based on transcript evidence.</p>
+      <div class="lens-grid">
+        <div class="lens"><div class="lens-top"><div><div class="k">L · Dimension 01</div><h4>Logic &amp; Evidence</h4></div><span class="badge bStrong">Strong</span></div><div class="ev"><em>Evidence</em>Strong reasoning across Q1 and Q3 — cited specific patient cues before proposing a next step.</div></div>
+        <div class="lens"><div class="lens-top"><div><div class="k">E · Dimension 02</div><h4>Extension or Transfer</h4></div><span class="badge bEmerging">Emerging</span></div><div class="ev"><em>Evidence</em>Ideas appeared across scenarios, but the underlying principles weren't named or carried forward explicitly.</div></div>
+        <div class="lens"><div class="lens-top"><div><div class="k">N · Dimension 03</div><h4>Novel Moves</h4></div><span class="badge bStrong">Strong</span></div><div class="ev"><em>Evidence</em>Tried a fresh framing in Q3 — offered to coordinate directly with the pharmacist rather than deferring.</div></div>
+        <div class="lens"><div class="lens-top"><div><div class="k">S · Dimension 04</div><h4>Self Regulation</h4></div><span class="badge bStrong">Strong</span></div><div class="ev"><em>Evidence</em>Maintained calm pacing on video throughout — no rushing, no defensive shifts when the patient pressed back.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW THE LEARNER RESPONDED ===== -->
+  <section id="response">
+    <div class="card pad">
+      <div class="sec-head">
+        <span class="sec-ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
+        <div><h2>How the Learner Responded</h2><div class="cap">Tap a question to jump the video to that moment.</div></div>
+        <span class="spacer"></span>
+        <a class="btn btn-line" href="#" onclick="toast('Preparing transcript…');return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          Full Transcript
+        </a>
+      </div>
+
+      <div class="resp-grid">
+        <!-- video -->
+        <div class="player" id="player">
+          <video id="vid" playsinline preload="metadata" crossorigin="anonymous"
+            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+          <div class="poster-note" id="posterNote">Video preview unavailable here — the question→timestamp jump still works on the timeline.</div>
+          <div class="vfade"></div>
+          <div class="now" id="nowChip"><span class="pulse"></span><span class="qn" id="nowQn">Q1</span>&nbsp;<b id="nowTitle">wrong dosage complaint</b></div>
+          <button class="big-play" id="bigPlay" aria-label="Play"><span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></button>
+          <div class="ctrls">
+            <div class="seek" id="seek"><div class="track"></div><div class="fill" id="fill"></div><div class="knob" id="knob"></div></div>
+            <div class="cbar">
+              <button class="cbtn" id="playBtn"><svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="cbtn" id="muteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+              <span class="time"><span id="cur">0:00</span><span class="sl">/</span><span id="dur">0:00</span></span>
+              <span class="spacer-c"></span>
+              <button class="cbtn" onclick="toast('Playback settings')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <!-- q&a -->
+        <div>
+          <div class="panel-top">
+            <div class="qcount">Question <b id="qCur">1</b> of <b id="qTot">5</b></div>
+            <div class="navq">
+              <button id="prevBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button id="nextBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="qlist" id="qlist"></div>
+          <div class="dots" id="dots"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EVALUATION CRITERIA / SUBJECT MARKS ===== -->
+  <section id="criteria">
+    <div class="card pad">
+      <div class="sec-head">
+        <span class="sec-ic ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <div><h2>Evaluation Criteria</h2><div class="cap">Review the AI score and override where needed, then recalculate.</div></div>
+        <span class="spacer"></span>
+        <span class="ai-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>You can override any AI score</span>
+      </div>
+      <table>
+        <thead><tr><th>Competency</th><th class="c">AI Score</th><th class="c">Override</th><th class="c">Grade</th></tr></thead>
+        <tbody id="critBody"></tbody>
+      </table>
+      <div class="crit-foot">
+        <button class="reset-all" id="resetAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>Reset to AI scores</button>
+        <span class="spacer"></span>
+        <span class="lab">Weighted average</span>
+        <span class="v" id="wavgV">7.4<b>/10</b></span>
+        <span class="gchip gB" id="wavgG">B</span>
+        <button class="btn btn-grad" id="recalcBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="recalcIc"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>Recalculate Score</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INSTRUCTOR FEEDBACK ===== -->
+  <section id="feedback">
+    <div class="card pad">
+      <div class="sec-head">
+        <span class="sec-ic ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <div><h2>Instructor Feedback</h2><div class="cap">Specific strengths, suggestions, and next steps.</div></div>
+      </div>
+      <div class="comment"><span class="qm">“</span>A genuinely empathetic communicator who keeps patients at ease under pressure. To move from <b>proficient</b> to <b>distinguished</b>, focus next term on naming the principle behind each decision and articulating the intended outcome more explicitly. A pleasure to assess.</div>
+
+      <div class="legend">
+        <span class="lk">Grading key:</span>
+        <span class="lk"><b>A</b> · 9.0–10.0</span><span class="lk"><b>B+</b> · 8.0–8.9</span><span class="lk"><b>B</b> · 7.0–7.9</span><span class="lk"><b>C+</b> · 6.0–6.9</span><span class="lk"><b>C</b> · 5.0–5.9</span>
+      </div>
+
+      <div class="signoff">
+        <div class="sig"><div class="name">P. Okafor</div><div class="who">Dr. Priya Okafor</div><div class="role">Lead Assessor · Clinical Communication</div></div>
+        <div class="sig"><div class="name">&nbsp;</div><div class="who">Date of Issue</div><div class="role">02 June 2026 · via Illuminate</div></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-line" onclick="toast('Returning to learner experience…')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          Back to Learner Experience
+        </button>
+        <button class="btn btn-grad" onclick="toast('Assessment finalised & sent ✓')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+          Finalise &amp; Send to Learner
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Powered by <span class="logo-sm">illuminate</span> · Learner Assessment Suite</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- grade + proficiency mapping ---------- */
+function gradeFor(v){
+  if(v>=9)return['A','gA']; if(v>=8)return['B+','gB']; if(v>=7)return['B','gB'];
+  if(v>=6)return['C+','gC']; if(v>=5)return['C','gC']; if(v>=4)return['D','gC']; return['E','gC'];
+}
+function profFor(v){
+  if(v>=9)return['Distinguished','']; if(v>=7)return['Proficient',''];
+  if(v>=5.5)return['Developing','amber']; return['Needs Support','red'];
+}
+
+/* ---------- overall score (donut) ---------- */
+const ring=document.getElementById('ring'); const RC=2*Math.PI*60;
+ring.style.transition='stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)';
+function setOverall(v,animate){
+  ring.style.strokeDashoffset = RC*(1-Math.max(0,Math.min(1,v/10)));
+  document.getElementById('ovScore').innerHTML = v.toFixed(1)+'<b>/10</b>';
+  const [g]=gradeFor(v); document.getElementById('ovGrade').textContent=g;
+  const [pf,pc]=profFor(v); const pe=document.getElementById('ovProf');
+  pe.className='prof'+(pc?(' '+pc):''); pe.innerHTML='<span class="d"></span>'+pf;
+}
+
+/* ---------- editable evaluation criteria ---------- */
+const CRIT=[
+  {n:'Problem Analysis',d:'Reads the situation accurately',w:0.21,ai:7.4,ic:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>'},
+  {n:'Solution Design',d:'Proposes a sound next step',w:0.21,ai:7.2,ic:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>'},
+  {n:'Articulation of Technical Concepts',d:'Explains clearly to patients',w:0.30,ai:6.4,ic:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'},
+  {n:'Stakeholder Communication',d:'Coordinates across the care team',w:0.14,ai:9.1,ic:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'},
+  {n:'Adaptability & Responsiveness',d:'Adjusts tone under pressure',w:0.14,ai:8.1,ic:'<path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/>'},
+];
+const critBody=document.getElementById('critBody');
+const inputs=[], gchips=[];
+let pending=false;
+
+CRIT.forEach((c,i)=>{
+  const [g,gc]=gradeFor(c.ai);
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><div class="subj"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${c.ic}</svg></span><div class="t">${c.n}<small>${c.d} · ${Math.round(c.w*100)}% weight</small></div></div></td>
+    <td class="sc">${c.ai.toFixed(1)}<b>/10</b></td>
+    <td class="ovcell">
+      <span class="ov"><input type="number" min="0" max="10" step="0.1" value="${c.ai.toFixed(1)}" data-i="${i}" aria-label="Override ${c.n}"><span class="sfx">/10</span></span>
+      <button class="rowreset" title="Reset to AI score" data-i="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></button>
+    </td>
+    <td class="c"><span class="gchip ${gc}" id="g${i}">${g}</span></td>`;
+  critBody.appendChild(tr);
+});
+critBody.querySelectorAll('.ov input').forEach(inp=>inputs.push(inp));
+CRIT.forEach((c,i)=>gchips.push(document.getElementById('g'+i)));
+
+function clamp(v){ v=parseFloat(v); if(isNaN(v))return null; return Math.max(0,Math.min(10,Math.round(v*10)/10)); }
+
+function refreshRow(i,live){
+  const inp=inputs[i], wrap=inp.closest('.ov'), tr=inp.closest('tr');
+  let val = live ? parseFloat(inp.value) : clamp(inp.value);
+  if(!live){ if(val===null) val=CRIT[i].ai; inp.value=val.toFixed(1); }
+  const use = (val===null||isNaN(val)) ? CRIT[i].ai : Math.max(0,Math.min(10,val));
+  const [g,gc]=gradeFor(use);
+  const chip=gchips[i];
+  if(chip.textContent!==g){ chip.classList.add('changed'); setTimeout(()=>chip.classList.remove('changed'),350); }
+  chip.textContent=g; chip.className='gchip '+gc; chip.id='g'+i;
+  const edited = Math.abs(use-CRIT[i].ai)>0.001;
+  wrap.classList.toggle('edited',edited);
+  tr.classList.toggle('edited',edited);
+}
+function markPending(){ pending=true; document.getElementById('recalcBtn').classList.add('pending'); }
+
+inputs.forEach((inp,i)=>{
+  inp.addEventListener('input',()=>{ refreshRow(i,true); markPending(); });
+  inp.addEventListener('change',()=>refreshRow(i,false));
+});
+critBody.querySelectorAll('.rowreset').forEach(b=>{
+  b.addEventListener('click',()=>{ const i=+b.dataset.i; inputs[i].value=CRIT[i].ai.toFixed(1); refreshRow(i,false); markPending(); });
+});
+
+function currentAvg(){
+  let sum=0,wsum=0;
+  inputs.forEach((inp,i)=>{ let v=clamp(inp.value); if(v===null)v=CRIT[i].ai; sum+=v*CRIT[i].w; wsum+=CRIT[i].w; });
+  return sum/wsum;
+}
+function recalculate(animate){
+  inputs.forEach((_,i)=>refreshRow(i,false));   // clamp + tidy
+  const avg=currentAvg();
+  const [g,gc]=gradeFor(avg);
+  document.getElementById('wavgV').innerHTML=avg.toFixed(1)+'<b>/10</b>';
+  const wg=document.getElementById('wavgG'); wg.textContent=g; wg.className='gchip '+gc;
+  setOverall(avg,animate);
+  pending=false; document.getElementById('recalcBtn').classList.remove('pending');
+}
+
+const recalcBtn=document.getElementById('recalcBtn');
+recalcBtn.addEventListener('click',()=>{
+  recalcBtn.classList.add('spin'); setTimeout(()=>recalcBtn.classList.remove('spin'),600);
+  recalculate(true);
+  toast('Score recalculated ✓');
+});
+document.getElementById('resetAll').addEventListener('click',()=>{
+  inputs.forEach((inp,i)=>{ inp.value=CRIT[i].ai.toFixed(1); refreshRow(i,false); });
+  recalculate(true); toast('Reset to AI scores');
+});
+
+/* initial paint */
+window.addEventListener('load',()=>{ setTimeout(()=>recalculate(true),250); });
+
+/* ---------- nav pill active on scroll ---------- */
+const pills=[...document.querySelectorAll('#navPills a')];
+const secs=pills.map(p=>document.querySelector(p.getAttribute('href')));
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){const id='#'+e.target.id;pills.forEach(p=>p.classList.toggle('on',p.getAttribute('href')===id));}});},{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=>s&&io.observe(s));
+
+/* ---------- video + Q&A chapter sync ---------- */
+const QUESTIONS=[
+  {tag:"Q1",title:"wrong dosage complaint",q:"A patient complains about receiving the wrong dosage of medication. How do you respond?",learner:"Wait, really? Are you sure it was the wrong dose? Let me check… I'll ask the pharmacist or someone about it.",model:"I'm really sorry to hear that. Let me immediately check your records and coordinate with the pharmacist to ensure you're safe and the issue is resolved."},
+  {tag:"Q2",title:"missing appointment",q:"A patient arrives for a follow-up but their appointment isn't in the system. They are frustrated.",learner:"Hmm, it's not showing here. Are you sure you booked for today? Let me look again in a minute.",model:"I'm sorry for the mix-up — that's frustrating. Let me find a slot for you right now and confirm the booking so this doesn't happen again."},
+  {tag:"Q3",title:"confused elderly patient",q:"An elderly patient appears confused and asks the same question multiple times.",learner:"I already explained that. Okay, I'll say it once more — please try to remember this time.",model:"Of course, I'm happy to go over it again. Let me explain it slowly, and I'll write the key points down so you can take them home."},
+  {tag:"Q4",title:"anxious before procedure",q:"A patient is anxious about an upcoming procedure and keeps asking questions.",learner:"There's nothing to worry about, it's routine. You'll be fine, honestly.",model:"It's completely normal to feel anxious. Let's walk through exactly what will happen, step by step, and I'll answer every question you have."},
+  {tag:"Q5",title:"upset about wait time",q:"A patient becomes upset and raises their voice about a long wait time.",learner:"Please calm down, it's not my fault. Everyone has to wait, there's nothing I can do.",model:"I understand the wait has been frustrating, and I'm sorry. Let me check where you are in the queue and get you an update right away."},
+];
+const vid=document.getElementById('vid'),fill=document.getElementById('fill'),knob=document.getElementById('knob'),seek=document.getElementById('seek'),curEl=document.getElementById('cur'),durEl=document.getElementById('dur'),bigPlay=document.getElementById('bigPlay'),playBtn=document.getElementById('playBtn'),playIcon=document.getElementById('playIcon'),muteBtn=document.getElementById('muteBtn'),qlist=document.getElementById('qlist'),dots=document.getElementById('dots'),qCur=document.getElementById('qCur'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),nowQn=document.getElementById('nowQn'),nowTitle=document.getElementById('nowTitle');
+const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+let active=0,times=[],userSeeking=false;
+document.getElementById('qTot').textContent=QUESTIONS.length;
+const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+
+QUESTIONS.forEach((d,i)=>{
+  const el=document.createElement('div');el.className='q';el.dataset.i=i;
+  el.innerHTML=`<div class="qhead"><div class="qmeta"><span class="qtag">${d.tag}</span><span class="qtime" id="qt${i}">0:00</span></div><div class="qtxt">${d.q}<span class="qplay"><span class="pulse"></span> Playing on video</span></div><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></div><div class="qbody"><div class="qbody-in"><div class="resp-b learner"><div class="rlabel"><span class="d"></span>Learner Response</div>${d.learner}</div><div class="resp-b model"><div class="rlabel"><span class="d"></span>Model Response</div>${d.model}</div></div></div>`;
+  el.querySelector('.qhead').addEventListener('click',()=>selectQuestion(i,true,true));
+  qlist.appendChild(el);
+  const dot=document.createElement('button');dot.addEventListener('click',()=>selectQuestion(i,true,true));dots.appendChild(dot);
+});
+const cards=[...qlist.children],dotEls=[...dots.children];
+
+function layoutChapters(){
+  const D=vid.duration&&isFinite(vid.duration)?vid.duration:83;
+  durEl.textContent=fmt(D);
+  const fr=[0.02,0.24,0.46,0.66,0.84];
+  times=QUESTIONS.map((_,i)=>+(D*(fr[i]??i/QUESTIONS.length)).toFixed(2));
+  seek.querySelectorAll('.mark').forEach(m=>m.remove());
+  times.forEach((t,i)=>{document.getElementById('qt'+i).textContent=fmt(t);const m=document.createElement('div');m.className='mark';m.style.left=(t/D*100)+'%';m.dataset.i=i;seek.appendChild(m);});
+  syncMarks();
+}
+vid.addEventListener('loadedmetadata',layoutChapters);
+
+function selectQuestion(i,seekTo=false,fromUser=false){
+  active=i;
+  cards.forEach((c,x)=>c.classList.toggle('active',x===i));
+  dotEls.forEach((d,x)=>d.classList.toggle('on',x===i));
+  qCur.textContent=i+1;prevBtn.disabled=(i===0);nextBtn.disabled=(i===QUESTIONS.length-1);
+  nowQn.textContent=QUESTIONS[i].tag;nowTitle.textContent=QUESTIONS[i].title;syncMarks();
+  if(seekTo&&times.length){userSeeking=true;vid.currentTime=times[i]+0.05;const p=vid.play();if(p&&p.catch)p.catch(()=>{});setTimeout(()=>userSeeking=false,400);}
+  if(fromUser)cards[i].scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function syncMarks(){seek.querySelectorAll('.mark').forEach(m=>m.classList.toggle('on',+m.dataset.i===active));}
+function chapterAt(t){let idx=0;for(let i=0;i<times.length;i++){if(t>=times[i]-0.15)idx=i;}return idx;}
+
+vid.addEventListener('timeupdate',()=>{
+  const D=vid.duration||83,pct=(vid.currentTime/D)*100;
+  fill.style.width=pct+'%';knob.style.left=pct+'%';curEl.textContent=fmt(vid.currentTime);
+  if(!userSeeking){const c=chapterAt(vid.currentTime);if(c!==active)selectQuestion(c,false,false);}
+  cards.forEach((c,x)=>c.classList.toggle('playing',x===active&&!vid.paused));
+});
+vid.addEventListener('play',()=>{playIcon.innerHTML=PAUSE;bigPlay.classList.add('hide');});
+vid.addEventListener('pause',()=>{playIcon.innerHTML=PLAY;cards.forEach(c=>c.classList.remove('playing'));});
+vid.addEventListener('error',()=>{document.getElementById('posterNote').style.display='grid';bigPlay.classList.add('hide');layoutChapters();});
+function togglePlay(){if(vid.paused){const p=vid.play();if(p&&p.catch)p.catch(()=>{});}else vid.pause();}
+bigPlay.addEventListener('click',togglePlay);playBtn.addEventListener('click',togglePlay);
+muteBtn.addEventListener('click',()=>{vid.muted=!vid.muted;muteBtn.style.opacity=vid.muted?.5:1;});
+seek.addEventListener('click',e=>{if(e.target.classList.contains('mark')){selectQuestion(+e.target.dataset.i,true,true);return;}const r=seek.getBoundingClientRect();vid.currentTime=(vid.duration||83)*Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));});
+prevBtn.addEventListener('click',()=>{if(active>0)selectQuestion(active-1,true,true);});
+nextBtn.addEventListener('click',()=>{if(active<QUESTIONS.length-1)selectQuestion(active+1,true,true);});
+
+let tT;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),1900);}
+
+layoutChapters();selectQuestion(0,false,false);playIcon.innerHTML=PLAY;
+</script>
+</body>
+</html>
