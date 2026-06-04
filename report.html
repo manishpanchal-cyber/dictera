@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Review &amp; Finalize Assessment Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;
+    --blue-strong:#1D4ED8;
+    --blue-soft:#EAF1FD;
+    --blue-soft-2:#EEF4FC;
+    --teal:#22B8C9;
+    --ink:#16203A;
+    --ink-2:#3A4763;
+    --muted:#7B879E;
+    --muted-2:#9AA4B8;
+    --line:#E6EAF1;
+    --line-2:#EDF0F6;
+    --green:#2E9E6B;
+    --green-soft:#E5F5EC;
+    --amber:#C77A0A;
+    --amber-soft:#FCF1D8;
+    --amber-pill:#FBE7A8;
+    --red:#D8584F;
+    --lav:#5B5BD6;
+    --lav-soft:#EAEAFB;
+    --card:#FFFFFF;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(20,32,58,.05), 0 8px 28px rgba(20,32,58,.06);
+    font-family:'Mulish',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:linear-gradient(135deg,#7B5BF0 0%,#5A6BF3 38%,#2F8FE0 72%,#22B8C9 100%);
+    min-height:100vh;color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- browser chrome ---------- */
+  .browser{padding:0;}
+  .chrome{background:#f3f4f7;border-bottom:1px solid #e3e5ea;}
+  .chrome-top{display:flex;align-items:center;gap:14px;padding:9px 14px 0 14px;}
+  .dots{display:flex;gap:7px}
+  .dots i{width:11px;height:11px;border-radius:50%;display:block}
+  .dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+  .tabs{display:flex;gap:6px;align-items:flex-end;margin-left:6px}
+  .tab{background:#fff;border:1px solid #e3e5ea;border-bottom:none;border-radius:9px 9px 0 0;padding:7px 30px 8px 12px;font-size:12px;color:#54607a;display:flex;align-items:center;gap:7px;position:relative;min-width:150px}
+  .tab.inactive{background:#e9ebf0;color:#7a849a}
+  .tab .x{position:absolute;right:9px;color:#aab2c2;font-size:13px}
+  .tab .fav{width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,#4f7cf4,#22b8c9)}
+  .chrome-url{display:flex;align-items:center;gap:12px;padding:8px 16px;background:#fff;border-bottom:1px solid #e8eaef}
+  .chrome-url .navs{display:flex;gap:16px;color:#9aa4b8;font-size:15px}
+  .urlbar{flex:1;background:#f1f3f7;border-radius:20px;padding:6px 14px;font-size:12.5px;color:#5b6072;display:flex;align-items:center;gap:7px}
+  .urlbar .lock{color:#9aa4b8;font-size:11px}
+  .chrome-url .acct{width:22px;height:22px;border-radius:50%;background:#2e9e6b;color:#fff;font-size:11px;display:grid;place-items:center;font-weight:700}
+
+  /* ---------- shell ---------- */
+  .shell{display:flex;min-height:760px}
+  .rail{width:64px;background:#0b0d12;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:18px;flex-shrink:0}
+  .rail .logo{width:30px;height:30px;border-radius:8px;background:conic-gradient(from 200deg,#5a6bf3,#22b8c9,#7b5bf0,#5a6bf3);}
+  .rail .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:#7d8aa6}
+  .rail .ic.plus{background:#15315f;color:#5fa0ff;border:1px solid #1f4f96}
+  .rail .ic.grid{color:#5fa0ff}
+  .rail .spacer{flex:1}
+  .rail .ic svg{width:19px;height:19px}
+
+  .stage{flex:1;padding:18px 18px 22px;}
+  .panel{background:#fff;border-radius:18px;min-height:100%;overflow:hidden;box-shadow:0 18px 50px rgba(20,20,60,.18)}
+  .panel-inner{padding:34px 40px 0}
+
+  /* header */
+  .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  h1{font-family:'Poppins';font-size:30px;font-weight:700;letter-spacing:-.4px}
+  .sub{color:var(--muted);font-size:13.5px;margin-top:6px;max-width:640px}
+  .dl-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #cfe0fb;color:var(--blue);background:#fff;font-weight:600;font-size:13.5px;padding:9px 15px;border-radius:10px;cursor:pointer;white-space:nowrap}
+  .dl-btn svg{width:15px;height:15px}
+  .focus{display:inline-flex;align-items:center;gap:8px;background:#eef2fb;color:var(--ink-2);font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:20px;margin-top:18px}
+  .focus .dot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
+  .focus b{font-weight:700}
+
+  /* body grid */
+  .body{display:grid;grid-template-columns:208px 1fr;gap:26px;padding:24px 0 36px}
+  .nav{position:sticky;top:16px;align-self:start;display:flex;flex-direction:column;gap:3px;border-right:1px solid var(--line-2);padding-right:16px}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--ink-2);font-size:14px;font-weight:600;text-decoration:none}
+  .nav a svg{width:17px;height:17px;color:var(--muted-2)}
+  .nav a.active{color:var(--blue);background:#f1f6ff}
+  .nav a.active svg{color:var(--blue)}
+
+  .col{display:flex;flex-direction:column;gap:24px;min-width:0}
+
+  .sec{border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow)}
+  .sec-hd{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .sec-title{display:flex;align-items:center;gap:11px;font-family:'Poppins';font-size:19px;font-weight:600}
+  .sec-ic{width:30px;height:30px;border-radius:9px;background:var(--blue-soft);display:grid;place-items:center;color:var(--blue)}
+  .sec-ic svg{width:17px;height:17px}
+  .sec-note{color:var(--muted);font-size:13px}
+  .sec-note.hint{display:inline-flex;align-items:center;gap:6px}
+  .sec p.lead{color:var(--muted);font-size:13.5px;margin-top:7px}
+
+  .pill-ghost{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--ink-2)}
+  .pill-ghost svg{width:14px;height:14px;color:#f0b429}
+
+  /* evaluation summary */
+  .es-grid{display:grid;grid-template-columns:240px 1fr;gap:8px;margin-top:18px;border:1px solid var(--line-2);border-radius:14px;overflow:hidden}
+  .es-score{background:var(--blue-soft);padding:26px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  .ring{position:relative;width:128px;height:128px}
+  .ring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .ctr b{font-family:'Poppins';font-size:22px;font-weight:700}
+  .ring .ctr span{font-size:12px;color:var(--muted)}
+  .prof{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--green)}
+  .prof .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .es-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:24px 26px}
+  .badge-n{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
+  .es-cols h4{display:flex;align-items:center;gap:9px;font-family:'Poppins';font-size:15px;font-weight:600;margin-bottom:14px}
+  .pt{display:flex;gap:10px;font-size:13px;color:var(--ink-2);line-height:1.5;margin-bottom:13px}
+  .pt .d{width:7px;height:7px;border-radius:50%;margin-top:6px;flex-shrink:0}
+
+  /* lens */
+  .lens-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+  .lens-card{background:var(--blue-soft-2);border-radius:13px;padding:15px 16px}
+  .lens-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .lens-kicker{font-size:10.5px;letter-spacing:.4px;color:var(--muted);font-weight:700;text-transform:uppercase}
+  .lens-name{font-family:'Poppins';font-size:15px;font-weight:600;margin-top:3px}
+  .tag{font-size:10.5px;font-weight:800;letter-spacing:.4px;padding:4px 9px;border-radius:14px;text-transform:uppercase}
+  .tag.strong{background:var(--green-soft);color:var(--green)}
+  .tag.emerging{background:#FCF3DA;color:var(--amber)}
+  .ev{background:#fff;border-radius:10px;padding:11px 13px;margin-top:13px}
+  .ev .k{font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--blue);text-transform:uppercase}
+  .ev p{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-top:6px}
+
+  /* learner responded */
+  .lr{display:grid;grid-template-columns:300px 1fr;gap:22px;margin-top:18px}
+  .video{background:#10141d;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .video-hd{display:flex;align-items:center;gap:8px;padding:11px 13px;color:#cfd6e6;font-size:12px}
+  .video-hd .q{background:#1f2733;border-radius:6px;padding:2px 7px;font-weight:700;font-size:11px}
+  .video-stage{flex:1;min-height:280px;background:radial-gradient(120% 90% at 50% 20%,#41506b 0%,#222b3a 60%,#161d28 100%);position:relative;display:grid;place-items:center}
+  .avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(160deg,#6b7790,#3a4358);display:grid;place-items:center;color:#aeb8cc}
+  .avatar svg{width:64px;height:64px}
+  .video-bar{display:flex;align-items:center;gap:10px;padding:10px 13px;color:#cfd6e6;font-size:11px}
+  .video-bar .track{flex:1;height:4px;border-radius:3px;background:#33405a;position:relative}
+  .video-bar .track::before{content:"";position:absolute;left:0;top:0;height:100%;width:4%;background:#fff;border-radius:3px}
+  .video-bar .track i{position:absolute;left:4%;top:50%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:#fff}
+
+  .qbox{display:flex;flex-direction:column;gap:11px;min-width:0}
+  .qnav{display:flex;align-items:center;justify-content:space-between}
+  .qnav .qq{font-size:13px;color:var(--muted)}
+  .qnav .qq b{color:var(--ink)}
+  .qnav .arrs{display:flex;gap:7px}
+  .qnav .arrs button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer}
+  .qcard{border:1px solid var(--line);border-radius:13px;padding:14px}
+  .qcard.open{border-color:#cfe0fb}
+  .qrow{display:flex;gap:11px;align-items:flex-start}
+  .qtag{background:var(--blue);color:#fff;font-size:10px;font-weight:700;border-radius:6px;padding:3px 7px;flex-shrink:0}
+  .qtime{font-size:10px;color:var(--muted);margin-top:5px}
+  .qtext{font-size:13px;font-weight:600;line-height:1.45;flex:1}
+  .qchev{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;flex-shrink:0}
+  .qchev svg{width:14px;height:14px}
+  .resp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+  .resp .b{border-radius:11px;padding:12px 13px}
+  .resp .b.learner{background:#fdf6ee}
+  .resp .b.model{background:#eef4fc}
+  .resp .lab{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+  .resp .b.learner .lab{color:#c77a0a}
+  .resp .b.model .lab{color:var(--blue)}
+  .resp .lab .dt{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .resp p{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .qcard.mini{display:flex;align-items:center;gap:11px}
+  .qcard.mini .qtext{font-weight:500;color:var(--ink-2)}
+  .qcard.mini .go{margin-left:auto;color:var(--blue)}
+  .dots-pg{display:flex;gap:6px;justify-content:center;margin-top:4px}
+  .dots-pg i{width:7px;height:7px;border-radius:50%;background:#d7deea}
+  .dots-pg i.on{width:18px;border-radius:4px;background:var(--blue)}
+
+  /* evaluation criteria table */
+  .tbl{margin-top:16px}
+  .tbl-hd,.tbl-row{display:grid;grid-template-columns:1fr 110px 110px;align-items:center;gap:10px}
+  .tbl-hd{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 4px 12px}
+  .tbl-hd .r{text-align:center}
+  .tbl-row{padding:15px 4px;border-top:1px solid var(--line-2)}
+  .rub{display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:600;color:var(--ink)}
+  .rub .ric{width:30px;height:30px;border-radius:9px;background:var(--blue-soft);display:grid;place-items:center;color:var(--blue);flex-shrink:0}
+  .rub .ric svg{width:15px;height:15px}
+  .ai{text-align:center;font-weight:700;font-size:14px}
+  .ovr{display:flex;justify-content:center}
+  .ovr .box{border:1px solid #cfe0fb;border-radius:9px;padding:6px 10px;font-weight:700;color:var(--blue);font-size:13px;display:flex;align-items:baseline;gap:1px}
+  .ovr .box span{color:var(--muted-2);font-size:11px;font-weight:600}
+  .wavg{display:flex;align-items:center;justify-content:flex-end;gap:18px;padding:18px 4px 2px;border-top:1px solid var(--line-2);margin-top:4px}
+  .wavg .lab{color:var(--muted);font-size:13px}
+  .wavg .big{font-family:'Poppins';font-size:24px;font-weight:700}
+  .recalc{display:inline-flex;align-items:center;gap:7px;border:1px solid #cfe0fb;color:var(--blue);background:#fff;font-weight:600;font-size:13px;padding:9px 13px;border-radius:10px;cursor:pointer}
+  .recalc svg{width:14px;height:14px}
+
+  /* ===== PROCTORING (new) ===== */
+  .risk-pill{display:inline-flex;align-items:center;gap:8px;background:var(--amber-pill);color:#946008;font-size:11.5px;font-weight:800;letter-spacing:.4px;padding:6px 12px;border-radius:18px}
+  .risk-pill .dt{width:7px;height:7px;border-radius:50%;background:#946008}
+  .pc-grid{display:grid;grid-template-columns:240px 1fr;gap:8px;margin-top:18px;border:1px solid var(--line-2);border-radius:14px;overflow:hidden}
+  .pc-score{background:var(--blue-soft);padding:24px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  .pc-score .num{font-family:'Poppins';font-size:46px;font-weight:700;line-height:1}
+  .pc-score .cap{font-size:12px;color:var(--muted);margin-top:-6px}
+  .meter{width:100%}
+  .meter .bands{display:flex;gap:4px;height:8px}
+  .meter .bands i{flex:1;border-radius:4px;opacity:.32}
+  .meter .bands i.low{background:var(--green)}
+  .meter .bands i.med{background:#E0A92E;opacity:1}
+  .meter .bands i.high{background:var(--red)}
+  .meter .marks{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;letter-spacing:.3px;color:var(--muted);text-transform:uppercase;margin-top:7px}
+  .meter .marks span.on{color:#A4761A}
+  .pc-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:22px 26px}
+  .pc-cols h4{display:flex;align-items:center;gap:9px;font-family:'Poppins';font-size:14.5px;font-weight:600;margin-bottom:13px}
+  .pc-cols .ti{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;color:#fff}
+  .pc-cols .ti svg{width:12px;height:12px}
+
+  .checks-h{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:22px 0 12px}
+  .checks{display:flex;flex-wrap:wrap;gap:9px}
+  .chk{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12.5px;color:var(--ink-2);background:#fff}
+  .chk .st{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .chk .st.ok{background:var(--green)}
+  .chk .st.watch{background:#E0A92E}
+  .chk .st.info{background:#9AA4B8}
+  .chk b{font-weight:700;color:var(--ink)}
+
+  .tl-h{display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px}
+  .tl-h .t{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .calc{font-size:12px;color:var(--muted)}
+  .calc b{color:var(--ink);font-weight:700}
+  .tl{display:flex;flex-direction:column;gap:10px}
+  .inc{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:13px 16px}
+  .inc .sev{font-size:11px;font-weight:700;color:var(--lav);background:var(--lav-soft);border-radius:7px;padding:3px 9px}
+  .inc .ev-name{font-family:'Mulish';font-weight:800;letter-spacing:.5px;font-size:13.5px;color:var(--ink)}
+  .inc .pen{font-size:12.5px;color:var(--muted);font-weight:600}
+  .inc .pen.big{color:var(--red)}
+  .inc .ts{margin-left:auto;font-size:12px;color:var(--muted-2);font-variant-numeric:tabular-nums}
+  .inc .kebab{width:26px;height:26px;border-radius:7px;background:#f4f6fa;color:#9aa4b8;display:grid;place-items:center;font-size:14px}
+
+  /* instructor feedback */
+  .ta{margin-top:16px;border:1px solid var(--line);border-radius:13px;min-height:120px;padding:15px 16px;color:var(--muted-2);font-size:13.5px}
+
+  /* footer */
+  .foot{border-top:1px solid var(--line-2);display:flex;justify-content:flex-end;gap:14px;padding:20px 40px;margin:0 -40px}
+  .btn-ghost{display:inline-flex;align-items:center;gap:9px;border:1px solid #cfe0fb;color:var(--blue);background:#fff;font-weight:700;font-size:14px;padding:12px 20px;border-radius:11px;cursor:pointer}
+  .btn-ghost svg{width:16px;height:16px}
+  .btn-primary{display:inline-flex;align-items:center;gap:9px;border:none;color:#fff;background:linear-gradient(95deg,#3358e8,#2aa6c5);font-weight:700;font-size:14px;padding:12px 22px;border-radius:11px;cursor:pointer;box-shadow:0 8px 22px rgba(42,120,200,.32)}
+  .btn-primary svg{width:16px;height:16px}
+
+  @media (max-width:1080px){
+    .body{grid-template-columns:1fr}.nav{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line-2);padding-right:0;padding-bottom:10px;position:static}
+    .es-grid,.pc-grid{grid-template-columns:1fr}.es-cols,.pc-cols,.lens-grid,.lr,.resp{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="browser">
+  <!-- browser chrome -->
+  <div class="chrome">
+    <div class="chrome-top">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="tabs">
+        <div class="tab"><span class="fav"></span>Tab Name<span class="x">×</span></div>
+        <div class="tab inactive"><span class="fav"></span>Tab Name<span class="x">×</span></div>
+        <div class="tab inactive"><span class="fav"></span>Tab Name<span class="x">×</span></div>
+      </div>
+    </div>
+    <div class="chrome-url">
+      <div class="navs"><span>‹</span><span>›</span><span>⟳</span></div>
+      <div class="urlbar"><span class="lock">🔒</span>url.com/path/</div>
+      <div class="acct">D</div>
+    </div>
+  </div>
+
+  <!-- app shell -->
+  <div class="shell">
+    <div class="rail">
+      <div class="logo"></div>
+      <div class="ic plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div class="ic grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+      <div class="spacer"></div>
+      <div class="ic" style="color:#f0b429"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></div>
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#5fa0ff" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></div>
+    </div>
+
+    <div class="stage">
+      <div class="panel">
+        <div class="panel-inner">
+
+          <!-- header -->
+          <div class="hd">
+            <div>
+              <h1>Review &amp; Finalize Assessment Results</h1>
+              <p class="sub">Review the summary below to identify strengths, areas for improvement, and provide feedback before finalizing the report.</p>
+            </div>
+            <button class="dl-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download Report</button>
+          </div>
+          <div class="focus"><span class="dot"></span>Skill Focus&nbsp; · &nbsp;<b>Empathetic Patient Communication</b></div>
+
+          <!-- body -->
+          <div class="body">
+            <!-- sidebar nav -->
+            <nav class="nav">
+              <a href="#summary" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>Summary</a>
+              <a href="#learner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Learner Response</a>
+              <a href="#criteria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Evaluation Criteria</a>
+              <a href="#proctoring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>Proctoring &amp; Integrity</a>
+              <a href="#feedback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12 7.7L3 21l1.8-6A8.5 8.5 0 1 1 21 11.5z"/></svg>Instructor Feedback</a>
+            </nav>
+
+            <div class="col">
+
+              <!-- evaluation summary -->
+              <section class="sec" id="summary">
+                <div class="sec-hd">
+                  <div class="sec-title"><span class="sec-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg></span>Evaluation Summary</div>
+                </div>
+                <p class="lead">This score reflects your performance across key communication competencies.</p>
+                <div class="es-grid">
+                  <div class="es-score">
+                    <div class="ring">
+                      <svg width="128" height="128" viewBox="0 0 128 128">
+                        <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7B5BF0"/><stop offset=".5" stop-color="#3D6FE8"/><stop offset="1" stop-color="#22B8C9"/></linearGradient></defs>
+                        <circle cx="64" cy="64" r="54" fill="none" stroke="#e4ebf6" stroke-width="12"/>
+                        <circle cx="64" cy="64" r="54" fill="none" stroke="url(#g1)" stroke-width="12" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="88.2" transform="rotate(-90 64 64)"/>
+                      </svg>
+                      <div class="ctr"><b>7.4/10</b><span>Score</span></div>
+                    </div>
+                    <span class="prof"><span class="dot"></span>Proficient</span>
+                  </div>
+                  <div class="es-cols">
+                    <div>
+                      <h4><span class="badge-n" style="background:var(--green)">3</span>Key Strengths</h4>
+                      <div class="pt"><span class="d" style="background:var(--green)"></span>Maintained a calm and supportive tone throughout.</div>
+                      <div class="pt"><span class="d" style="background:var(--green)"></span>Recognised emotional cues early and responded empathetically.</div>
+                      <div class="pt"><span class="d" style="background:var(--green)"></span>Used inclusive language appropriate for various cultural contexts.</div>
+                    </div>
+                    <div>
+                      <h4><span class="badge-n" style="background:#E0A92E">2</span>Development Areas</h4>
+                      <div class="pt"><span class="d" style="background:#E0A92E"></span>Reflection phase lacked depth on alternative approaches.</div>
+                      <div class="pt"><span class="d" style="background:#E0A92E"></span>Could more clearly articulate the intended outcome during the "Task" phase.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LENS -->
+                <div class="sec-hd" style="margin-top:28px">
+                  <div class="sec-title" style="font-size:17px">LENS Thinking Framework</div>
+                  <span class="pill-ghost"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6 6.6.6-5 4.4 1.5 6.5L12 16.8 5.9 19.5 7.5 13l-5-4.4 6.6-.6z"/></svg>3 of 4 Strong</span>
+                </div>
+                <p class="lead">LENS evaluates four higher-order thinking moves the learner demonstrated — beyond just answering correctly. Each dimension is marked <b>Strong</b>, <b>Emerging</b>, or Not Observed based on transcript evidence.</p>
+                <div class="lens-grid">
+                  <div class="lens-card">
+                    <div class="lens-top"><div><div class="lens-kicker">L · Dimension 01</div><div class="lens-name">Logic &amp; Evidence</div></div><span class="tag strong">Strong</span></div>
+                    <div class="ev"><div class="k">Evidence</div><p>Strong reasoning across Q1 and Q3 — cited specific patient cues before proposing a next step.</p></div>
+                  </div>
+                  <div class="lens-card">
+                    <div class="lens-top"><div><div class="lens-kicker">E · Dimension 02</div><div class="lens-name">Extension or Transfer</div></div><span class="tag emerging">Emerging</span></div>
+                    <div class="ev"><div class="k">Evidence</div><p>Ideas appeared across different scenarios, but the underlying principles weren't named or carried forward explicitly.</p></div>
+                  </div>
+                  <div class="lens-card">
+                    <div class="lens-top"><div><div class="lens-kicker">N · Dimension 03</div><div class="lens-name">Novel Moves</div></div><span class="tag strong">Strong</span></div>
+                    <div class="ev"><div class="k">Evidence</div><p>Strong reasoning across Q1 and Q3 — cited specific patient cues before proposing a next step.</p></div>
+                  </div>
+                  <div class="lens-card">
+                    <div class="lens-top"><div><div class="lens-kicker">S · Dimension 04</div><div class="lens-name">Self Regulation</div></div><span class="tag strong">Strong</span></div>
+                    <div class="ev"><div class="k">Evidence</div><p>Strong reasoning across Q1 and Q3 — cited specific patient cues before proposing a next step.</p></div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- how the learner responded -->
+              <section class="sec" id="learner">
+                <div class="sec-hd">
+                  <div class="sec-title"><span class="sec-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></span>How the Learner Responded</div>
+                  <span class="sec-note hint" style="color:var(--blue);font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download Full Transcript</span>
+                </div>
+                <div class="lr">
+                  <div class="video">
+                    <div class="video-hd"><span class="q">● Q1</span> Wrong dosage complaint…</div>
+                    <div class="video-stage"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg></div></div>
+                    <div class="video-bar"><span>▶</span><span>🔊</span><div class="track"><i></i></div><span>0:00 / 1:23</span><span>···</span></div>
+                  </div>
+                  <div class="qbox">
+                    <div class="qnav"><div class="qq">Question <b>3</b> of <b>9</b></div><div class="arrs"><button>‹</button><button>›</button></div></div>
+                    <div class="qcard open">
+                      <div class="qrow"><span class="qtag">Q1</span><div style="flex:1"><div class="qtext">A patient complains about receiving the wrong dosage of medication. How do you respond?</div><div class="qtime">0:01</div></div><span class="qchev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></span></div>
+                      <div class="resp">
+                        <div class="b learner"><div class="lab"><span class="dt"></span>Learner Response</div><p>Wait, really? Are you sure it was the wrong dose? Let me check… I'll ask the pharmacist or someone about it.</p></div>
+                        <div class="b model"><div class="lab"><span class="dt"></span>Model Response</div><p>I'm really sorry to hear that. Let me immediately check your records and coordinate with the pharmacist to ensure you're safe and the issue is resolved.</p></div>
+                      </div>
+                    </div>
+                    <div class="qcard mini"><span class="qtag" style="background:#eef2fb;color:var(--blue)">Q2</span><div><div class="qtext">A patient arrives for a follow-up but their appointment isn't in the system. They are frustrated.</div><div class="qtime">0:19</div></div><span class="go">›</span></div>
+                    <div class="qcard mini"><span class="qtag" style="background:#eef2fb;color:var(--blue)">Q3</span><div><div class="qtext">An elderly patient appears confused and asks the same question multiple times.</div><div class="qtime">0:38</div></div><span class="go">›</span></div>
+                    <div class="dots-pg"><i class="on"></i><i></i><i></i></div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- evaluation criteria -->
+              <section class="sec" id="criteria">
+                <div class="sec-hd">
+                  <div class="sec-title"><span class="sec-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></span>Evaluation Criteria</div>
+                  <span class="sec-note hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2"/></svg>You can override any AI score</span>
+                </div>
+                <div class="tbl">
+                  <div class="tbl-hd"><div>Rubric</div><div class="r">AI Score</div><div class="r">Override</div></div>
+                  <div class="tbl-row"><div class="rub"><span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>Problem Analysis</div><div class="ai">7.4</div><div class="ovr"><span class="box">7.4<span>/10</span></span></div></div>
+                  <div class="tbl-row"><div class="rub"><span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/></svg></span>Solution Design</div><div class="ai">7.2</div><div class="ovr"><span class="box">7.2<span>/10</span></span></div></div>
+                  <div class="tbl-row"><div class="rub"><span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></span>Articulation of Technical Concepts</div><div class="ai">6.4</div><div class="ovr"><span class="box">6.4<span>/10</span></span></div></div>
+                  <div class="tbl-row"><div class="rub"><span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3 2.5-5 6-5s6 2 6 5M15 19c0-2 1.5-3.5 4-3.5"/></svg></span>Stakeholder Communication</div><div class="ai">9.1</div><div class="ovr"><span class="box">9.1<span>/10</span></span></div></div>
+                  <div class="tbl-row"><div class="rub"><span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/></svg></span>Adaptability &amp; Responsiveness</div><div class="ai">8.1</div><div class="ovr"><span class="box">8.1<span>/10</span></span></div></div>
+                  <div class="wavg"><span class="lab">Weighted average:</span><span class="big">7.4 / 10</span><button class="recalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Recalculate Score</button></div>
+                </div>
+              </section>
+
+              <!-- ============ PROCTORING & INTEGRITY (new) ============ -->
+              <section class="sec" id="proctoring">
+                <div class="sec-hd">
+                  <div class="sec-title"><span class="sec-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg></span>Proctoring &amp; Integrity</div>
+                  <span class="risk-pill"><span class="dt"></span>Medium Risk</span>
+                </div>
+                <p class="lead">Session integrity signals captured during the assessment. Review the flagged window against the transcript before finalising — a medium score is contextual, not a confirmed violation.</p>
+
+                <div class="pc-grid">
+                  <div class="pc-score">
+                    <div class="num">40</div>
+                    <div class="cap">Integrity score</div>
+                    <div class="meter">
+                      <div class="bands"><i class="low"></i><i class="med"></i><i class="high"></i></div>
+                      <div class="marks"><span>Low</span><span class="on">Medium</span><span>High</span></div>
+                    </div>
+                  </div>
+                  <div class="pc-cols">
+                    <div>
+                      <h4><span class="ti" style="background:#E0A92E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>What the signals show</h4>
+                      <div class="pt"><span class="d" style="background:#E0A92E"></span>7 high-severity flags, all within a 32-second window (15:35:13 – 15:35:45).</div>
+                      <div class="pt"><span class="d" style="background:#E0A92E"></span>6 tab-switches plus 1 full-screen exit — clustered, then no further activity.</div>
+                      <div class="pt"><span class="d" style="background:var(--muted)"></span>Camera/mic granted and fullscreen entered; environment otherwise compliant.</div>
+                    </div>
+                    <div>
+                      <h4><span class="ti" style="background:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Faculty recommendation</h4>
+                      <div class="pt"><span class="d" style="background:var(--blue)"></span>Cross-check Q-timestamps with 15:35; the cluster falls between question prompts.</div>
+                      <div class="pt"><span class="d" style="background:var(--blue)"></span>Short, isolated burst — consistent with a brief distraction rather than sustained look-ups.</div>
+                      <div class="pt"><span class="d" style="background:var(--blue)"></span>Medium band: note in feedback, no automatic penalty to the competency score.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="checks-h">Environment &amp; Device Checks</div>
+                <div class="checks">
+                  <span class="chk"><span class="st ok"></span>getUserMedia: <b>true</b></span>
+                  <span class="chk"><span class="st info"></span>getDisplayMedia: <b>false</b></span>
+                  <span class="chk"><span class="st ok"></span>fullscreen: <b>true</b></span>
+                  <span class="chk"><span class="st watch"></span>clipboardEvents: <b>true</b></span>
+                  <span class="chk"><span class="st ok"></span>visibilityApi: <b>true</b></span>
+                  <span class="chk"><span class="st info"></span>fullscreenMode: <b>visibility_only</b></span>
+                  <span class="chk"><span class="st watch"></span>screenDegraded: <b>true</b></span>
+                  <span class="chk"><span class="st ok"></span>browser: <b>Chrome</b></span>
+                </div>
+
+                <div class="tl-h">
+                  <div class="t">Incident timeline (7)</div>
+                  <div class="calc">6 × TAB_SWITCH (+5) &nbsp;+&nbsp; 1 × FULLSCREEN_EXIT (+10) = <b>40 / Medium</b></div>
+                </div>
+                <div class="tl">
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">TAB_SWITCH</span><span class="pen">+5</span><span class="ts">15:35:13</span><span class="kebab">·</span></div>
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">TAB_SWITCH</span><span class="pen">+5</span><span class="ts">15:35:17</span><span class="kebab">·</span></div>
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">TAB_SWITCH</span><span class="pen">+5</span><span class="ts">15:35:18</span><span class="kebab">·</span></div>
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">TAB_SWITCH</span><span class="pen">+5</span><span class="ts">15:35:25</span><span class="kebab">·</span></div>
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">FULLSCREEN_EXIT</span><span class="pen big">+10</span><span class="ts">15:35:36</span><span class="kebab">·</span></div>
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">TAB_SWITCH</span><span class="pen">+5</span><span class="ts">15:35:43</span><span class="kebab">·</span></div>
+                  <div class="inc"><span class="sev">high</span><span class="ev-name">TAB_SWITCH</span><span class="pen">+5</span><span class="ts">15:35:45</span><span class="kebab">·</span></div>
+                </div>
+              </section>
+
+              <!-- instructor feedback -->
+              <section class="sec" id="feedback">
+                <div class="sec-hd">
+                  <div class="sec-title"><span class="sec-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12 7.7L3 21l1.8-6A8.5 8.5 0 1 1 21 11.5z"/></svg></span>Instructor Feedback</div>
+                </div>
+                <div class="ta">Share specific strengths, suggestions, or next steps for the learner.</div>
+              </section>
+
+            </div>
+          </div>
+
+          <!-- footer -->
+          <div class="foot">
+            <button class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Learner Experience</button>
+            <button class="btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>Finalise &amp; Send Assessment to Learner</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
