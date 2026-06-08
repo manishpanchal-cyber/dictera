@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illuminate — Learner Flow Demo (Screens 1–6)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --grad-cta: linear-gradient(95deg,#8466D6 0%,#4C8FCE 52%,#27B9A6 100%);
+  --accent:#2F6BE0; --accent-indigo:#5B5BD6;
+  --ink:#1C2434; --ink-soft:#3a4358; --muted:#8A93A6; --muted-2:#9AA1B2;
+  --line:#ECEEF3; --card:#FFFFFF; --scenario-bg:#F4F5FE;
+  --chip-bg:#E9F1FE; --navy:#16243F; --navy-2:#1B2A4A;
+  --speak-idle:#2E80B6; --speak-active:#1BA37C;
+  --bubble-patient:#F0EBFB; --bubble-learner:#E7F1FB;
+  --glow-purple:#7C5CE0; --green-bg:#DFF5EA; --green-ink:#198A5A;
+  --amber-bg:#FFF3DC; --amber-ink:#B5781A; --danger:#E0476B;
+  --radius:18px; --shadow:0 10px 30px rgba(28,36,52,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+body{font-family:'Poppins',sans-serif;background:#EEF1F6;color:var(--ink);padding:40px 20px 80px;line-height:1.45}
+.page-head{max-width:900px;margin:0 auto 40px;text-align:center}
+.page-head h1{font-size:26px;font-weight:700;letter-spacing:-.3px}
+.page-head p{color:var(--muted);font-size:14px;margin-top:8px}
+.legend{display:inline-flex;gap:18px;margin-top:18px;flex-wrap:wrap;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:40px;padding:10px 20px;font-size:12px;color:var(--ink-soft)}
+.legend b{color:var(--accent)}
+
+.grid{display:flex;flex-wrap:wrap;gap:48px 40px;justify-content:center;align-items:flex-start;max-width:1320px;margin:0 auto}
+.frame-wrap{width:392px;display:flex;flex-direction:column;align-items:center}
+.frame-label{font-weight:600;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.frame-label .n{background:var(--grad-cta);color:#fff;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700}
+
+/* phone shell */
+.phone{width:392px;height:812px;border-radius:48px;background:#fff;border:11px solid #11151c;position:relative;overflow:hidden;box-shadow:0 30px 60px rgba(17,21,28,.28)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:30px;background:#11151c;border-radius:0 0 20px 20px;z-index:90}
+.statusbar{height:52px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-size:15px;font-weight:600;position:relative;z-index:50}
+.sb-icons{display:flex;align-items:center;gap:6px}
+.screen{height:calc(100% - 52px);overflow-y:auto;position:relative}
+.screen::-webkit-scrollbar{width:0}
+.pad{padding:8px 22px 24px}
+
+.h-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.back-btn{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;flex:none}
+.h-title{font-size:19px;font-weight:700;letter-spacing:-.2px}
+.subtle{color:var(--muted);font-size:13.5px;margin:2px 0 0}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-top:16px}
+.scenario{background:var(--scenario-bg);border-color:#E4E7F7}
+.card-title{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px}
+.card-title .ic{width:22px;height:22px;color:var(--accent);flex:none}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.scenario .hr{background:#E1E4F4}
+.skill-focus .val{font-size:14.5px;color:var(--ink-soft);margin-top:2px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}
+.meta .k{font-size:12.5px;color:var(--muted)}
+.meta .v{font-size:14.5px;font-weight:600;margin-top:2px}
+.s-h{font-weight:600;font-size:14px;margin:2px 0 6px}
+.s-p{font-size:13px;color:var(--muted-2);line-height:1.55}
+.crit{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.crit li{font-size:13px;color:var(--muted-2);display:flex;gap:8px}
+.crit li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none}
+
+.expander{border:1px solid #E4E7F7;border-radius:12px;margin-top:14px;overflow:hidden}
+.exp-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent);background:#fff}
+.exp-head .chev{transition:.25s}
+.exp-body{padding:0 14px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s}
+.expander.open .exp-body{max-height:600px;padding:0 14px 14px}
+.expander.open .chev{transform:rotate(180deg)}
+
+.note{display:flex;gap:8px;align-items:flex-start;background:#fff;border:1px dashed #C7D2F0;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:var(--ink-soft);line-height:1.4}
+.note .dot{background:var(--accent);color:#fff;font-weight:700;border-radius:6px;font-size:10px;padding:2px 6px;flex:none;margin-top:1px}
+.changes{width:392px;margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.changes h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin-bottom:10px}
+.changes ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.changes li{font-size:12.5px;color:var(--ink-soft);display:flex;gap:8px;line-height:1.45}
+.changes li::before{content:"✓";color:var(--speak-active);font-weight:700;flex:none}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:16px;padding:17px;color:#fff;font-family:inherit;font-size:15.5px;font-weight:600;background:var(--grad-cta);box-shadow:0 12px 24px rgba(76,143,206,.28);cursor:pointer}
+.cta.disabled{background:#D7DBE3;color:#fff;box-shadow:none;cursor:not-allowed}
+.cta.ghost{background:#fff;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none}
+.footer-bar{position:sticky;bottom:0;background:linear-gradient(0deg,#fff 70%,rgba(255,255,255,0));padding:16px 22px 22px;display:flex;gap:12px}
+.footer-bar .cta{flex:1}
+
+.cam-tile{border-radius:18px;overflow:hidden;position:relative;height:208px;margin-top:14px;display:grid;place-items:center}
+.cam-off{background:#111418}
+.cam-on{background:linear-gradient(150deg,#3c4a63,#222b3c)}
+.cam-msg{text-align:center;color:#fff;padding:0 24px}
+.cam-msg .t{font-size:18px;font-weight:600}
+.cam-msg .s{font-size:13px;color:#c5cbd6;margin-top:4px}
+.cam-name{position:absolute;left:14px;bottom:14px;background:rgba(0,0,0,.45);color:#fff;font-size:12.5px;padding:6px 12px;border-radius:20px;backdrop-filter:blur(4px)}
+.cam-ctrls{position:absolute;right:14px;bottom:14px;display:flex;gap:10px}
+.ctrl{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:none;cursor:pointer}
+.ctrl.off{background:#46505f;color:#cdd4df}
+.ctrl.on{background:#fff;color:var(--ink)}
+.avatar-glyph{width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;color:rgba(255,255,255,.7)}
+
+.req-row{display:flex;gap:10px;margin-top:14px}
+.req{flex:1;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.req .rt{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+.req .badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;align-self:flex-start}
+.badge.req-on{background:var(--green-bg);color:var(--green-ink)}
+.badge.req-need{background:var(--amber-bg);color:var(--amber-ink)}
+.badge.opt{background:#EEF0F4;color:var(--muted)}
+
+.device-row{display:flex;gap:10px;margin-top:14px}
+.device{flex:1;border:1px solid var(--line);border-radius:30px;padding:11px 14px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft);min-width:0}
+.device .dn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.device svg{flex:none;color:var(--accent)}
+.device .chev{margin-left:auto;color:var(--muted);flex:none}
+
+.reminder{background:var(--scenario-bg);border:1px solid #E4E7F7;border-radius:16px;padding:15px 16px;margin-top:16px}
+.reminder .rt{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.reminder .rt svg{color:var(--accent-indigo)}
+.reminder p{font-size:12.5px;color:var(--muted-2);margin-top:6px;line-height:1.5}
+.pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pill{background:var(--chip-bg);color:var(--ink-soft);font-size:12px;padding:7px 12px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.pill svg{color:var(--accent);width:14px;height:14px}
+
+.video-hero{position:relative;border-radius:20px;overflow:hidden;margin-top:6px;background:linear-gradient(150deg,#4a4366,#2b3247);box-shadow:0 0 0 3px var(--glow-purple),0 14px 30px rgba(124,92,224,.25)}
+.video-hero.std{height:240px}
+.vh-inner{height:100%;display:grid;place-items:center}
+.selfview{position:absolute;right:12px;top:12px;width:96px;height:118px;border-radius:14px;overflow:hidden;background:linear-gradient(150deg,#3c4a63,#222b3c);display:grid;place-items:center;border:2px solid rgba(255,255,255,.3)}
+.selfview.speaking{border-color:var(--speak-active);box-shadow:0 0 0 3px rgba(27,163,124,.4)}
+.selfview .you{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;font-size:10.5px;padding:2px 9px;border-radius:12px}
+.selfview .av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.7)}
+
+.status-line{text-align:center;font-weight:600;font-size:14.5px;margin:14px 0 12px;display:flex;align-items:center;justify-content:center;gap:10px}
+.status-line.ai{color:var(--accent)}
+.status-line.you{color:var(--speak-active)}
+.wave{display:flex;align-items:center;gap:3px;height:18px}
+.wave i{width:3px;background:currentColor;border-radius:3px;animation:wv 1s ease-in-out infinite}
+.wave i:nth-child(1){height:6px}.wave i:nth-child(2){height:14px;animation-delay:.1s}.wave i:nth-child(3){height:9px;animation-delay:.2s}.wave i:nth-child(4){height:17px;animation-delay:.3s}.wave i:nth-child(5){height:7px;animation-delay:.15s}.wave i:nth-child(6){height:12px;animation-delay:.25s}
+@keyframes wv{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+.dots i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;margin:0 2px;animation:bl 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
+
+.speak-btn{width:100%;border:none;border-radius:18px;padding:20px 22px;display:flex;align-items:center;gap:16px;font-family:inherit;font-size:16px;font-weight:600;color:#fff;cursor:pointer;transition:.2s}
+.speak-btn .mic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none}
+.speak-active{background:var(--speak-active);box-shadow:0 12px 26px rgba(27,163,124,.3)}
+.speak-active .mic{background:rgba(255,255,255,.2);color:#fff}
+.speak-wait{background:#cdd8e2;color:#fff;cursor:default;box-shadow:none}
+.speak-wait .mic{background:rgba(255,255,255,.5);color:#fff}
+.type-instead{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;color:var(--accent);font-size:13px;font-weight:500;background:none;border:none;cursor:pointer;width:100%}
+
+.dim{position:absolute;inset:0;background:rgba(13,20,35,.55);z-index:30}
+.coach{position:absolute;z-index:40;left:18px;right:18px;background:var(--navy);color:#fff;border-radius:18px;padding:20px;box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.coach h3{font-size:20px;font-weight:700}
+.coach p{font-size:13.5px;color:#aeb8cc;margin-top:8px;line-height:1.5}
+.coach .row{display:flex;align-items:center;justify-content:space-between;margin-top:18px}
+.coach .skip{font-size:13.5px;color:#fff;font-weight:600;background:none;border:none;cursor:pointer}
+.coach .next{background:var(--grad-cta);color:#fff;border:none;border-radius:12px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.coach .arrow{position:absolute;width:22px;height:22px;background:var(--navy);transform:rotate(45deg)}
+.coach .dotrow{display:flex;gap:6px;justify-content:center;margin:6px 0 2px}
+.coach .dotrow span{width:8px;height:8px;border-radius:50%;background:#41506b}
+.coach .dotrow span.on{width:22px;border-radius:5px;background:var(--accent)}
+
+.practice-badge{display:inline-flex;align-items:center;gap:7px;background:var(--amber-bg);color:var(--amber-ink);font-size:12px;font-weight:600;padding:7px 13px;border-radius:20px;margin:6px auto 0}
+.center{display:flex;justify-content:center}
+
+/* =========================================================
+   SCREEN 6 — VIDEO-CALL LAYOUT  (all scoped under .vc-phone)
+   ========================================================= */
+.vc-phone{background:#0e1622}
+.vc-phone .statusbar{color:#fff;position:absolute;top:0;left:0;right:0;z-index:95}
+.vc-phone .screen{position:absolute;inset:0;height:auto;overflow:hidden}
+.vc-phone .callbg{position:absolute;inset:0;background:linear-gradient(160deg,#4b4468 0%,#2b3247 55%,#1d2433 100%)}
+.vc-phone .callbg .face{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.18)}
+.vc-phone .callbg .name{position:absolute;left:18px;bottom:150px;background:rgba(0,0,0,.4);color:#fff;font-size:13px;padding:7px 14px;border-radius:22px;backdrop-filter:blur(6px);display:flex;align-items:center;gap:7px;z-index:6}
+.vc-phone .callbg .name .live{width:7px;height:7px;border-radius:50%;background:var(--speak-active)}
+.vc-phone .topbar{position:absolute;top:0;left:0;right:0;padding:60px 18px 40px;z-index:10;background:linear-gradient(180deg,rgba(8,12,20,.65),rgba(8,12,20,0));display:flex;align-items:center;justify-content:space-between}
+.vc-phone .timepill{background:rgba(0,0,0,.4);backdrop-filter:blur(6px);color:#fff;border-radius:22px;padding:8px 14px;font-size:12.5px;display:flex;align-items:center;gap:8px}
+.vc-phone .timepill .seg{display:flex;align-items:center;gap:6px}
+.vc-phone .timepill .div{width:1px;height:13px;background:rgba(255,255,255,.3)}
+.vc-phone .turns{display:flex;gap:4px}
+.vc-phone .turns i{width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.3)}
+.vc-phone .turns i.done{background:#fff}
+.vc-phone .turns i.cur{background:var(--speak-active)}
+.vc-phone .iconbtn{width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);border:none;color:#fff;display:grid;place-items:center;cursor:pointer}
+.vc-phone .pip{position:absolute;right:14px;top:104px;width:104px;height:138px;border-radius:16px;overflow:hidden;z-index:12;background:linear-gradient(150deg,#3c4a63,#222b3c);border:2px solid rgba(255,255,255,.35);box-shadow:0 8px 20px rgba(0,0,0,.35);transition:.25s}
+.vc-phone .pip.speaking{border-color:var(--speak-active);box-shadow:0 0 0 3px rgba(27,163,124,.45)}
+.vc-phone .pip .av{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.35)}
+.vc-phone .pip .you{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;font-size:10.5px;padding:2px 9px;border-radius:12px}
+.vc-phone .pip.hidden{display:none}
+.vc-phone .pipshow{position:absolute;right:14px;top:104px;z-index:12;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border:none;color:#fff;font-size:11px;padding:7px 11px;border-radius:18px;cursor:pointer;display:none;align-items:center;gap:5px}
+.vc-phone .bottom{position:absolute;left:0;right:0;bottom:0;z-index:14;padding:40px 18px 26px;background:linear-gradient(0deg,rgba(8,12,20,.82) 55%,rgba(8,12,20,0))}
+.vc-phone .vstatus{text-align:center;color:#fff;font-size:14.5px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px;min-height:20px}
+.vc-phone .speak{width:100%;border:none;border-radius:18px;padding:18px;display:flex;align-items:center;justify-content:center;gap:14px;font-family:inherit;font-size:15.5px;font-weight:600;color:#fff;cursor:pointer;transition:.2s}
+.vc-phone .speak .mic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+.vc-phone .idle{background:var(--speak-idle);box-shadow:0 10px 24px rgba(46,128,182,.4)}
+.vc-phone .idle .mic{background:#fff;color:var(--speak-idle)}
+.vc-phone .active{background:var(--speak-active);box-shadow:0 10px 24px rgba(27,163,124,.45)}
+.vc-phone .active .mic{background:rgba(255,255,255,.22);color:#fff}
+.vc-phone .think{background:rgba(255,255,255,.14);color:rgba(255,255,255,.6);cursor:default}
+.vc-phone .think .mic{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.vc-phone .dock{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding:0 4px}
+.vc-phone .dockbtn{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:inherit}
+.vc-phone .dockbtn .c{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.13);display:grid;place-items:center;color:#fff;position:relative}
+.vc-phone .dockbtn .l{font-size:10.5px;color:rgba(255,255,255,.72)}
+.vc-phone .dockbtn.end .c{background:var(--danger)}
+.vc-phone .dockbtn .badge{position:absolute;top:-3px;right:-3px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:9px;display:grid;place-items:center;padding:0 4px}
+.vc-phone .hint{text-align:center;color:rgba(255,255,255,.4);font-size:10.5px;margin-top:14px}
+.vc-phone .scrim{position:absolute;inset:0;background:rgba(8,12,20,.5);z-index:40;opacity:0;pointer-events:none;transition:.25s}
+.vc-phone .scrim.show{opacity:1;pointer-events:auto}
+.vc-phone .sheet{position:absolute;left:0;right:0;bottom:0;z-index:50;background:#fff;border-radius:26px 26px 0 0;transform:translateY(100%);transition:transform .3s cubic-bezier(.22,1,.36,1);max-height:78%;display:flex;flex-direction:column}
+.vc-phone .sheet.show{transform:translateY(0)}
+.vc-phone .grab{width:40px;height:5px;border-radius:3px;background:#D7DBE3;margin:12px auto 4px}
+.vc-phone .sheet-h{display:flex;align-items:center;justify-content:space-between;padding:8px 22px 12px;border-bottom:1px solid var(--line)}
+.vc-phone .sheet-h h3{font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px}
+.vc-phone .sheet-h h3 svg{color:var(--accent)}
+.vc-phone .sheet-h .x{background:#EEF0F4;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;color:var(--ink);display:grid;place-items:center}
+.vc-phone .sheet-body{overflow-y:auto;padding:16px 22px 28px}
+.vc-phone .sheet-body::-webkit-scrollbar{width:0}
+.vc-phone .tag{font-size:11px;color:var(--muted);text-align:right;margin-bottom:4px}
+.vc-phone .bubble{border-radius:16px;padding:13px 15px;margin-top:12px}
+.vc-phone .bubble.patient{background:var(--bubble-patient)}
+.vc-phone .bubble.learner{background:var(--bubble-learner)}
+.vc-phone .b-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}
+.vc-phone .b-head .ts{font-size:11.5px;color:var(--muted);font-weight:500}
+.vc-phone .spark{color:var(--accent-indigo)}
+.vc-phone .b-body{font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.55}
+.vc-phone .b-check{display:flex;justify-content:space-between;align-items:center;margin-top:9px;padding-top:8px;border-top:1px solid rgba(0,0,0,.05)}
+.vc-phone .b-check .ok{font-size:11px;color:var(--green-ink);display:flex;align-items:center;gap:5px}
+.vc-phone .b-fix{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:500;text-decoration:underline}
+.vc-phone .sc-title{font-weight:600;font-size:14px;margin-bottom:6px}
+.vc-phone .sc-p{font-size:13px;color:var(--muted-2);line-height:1.55;margin-bottom:14px}
+.vc-phone .sc-h{font-weight:600;font-size:13px;margin:10px 0 6px}
+.vc-phone .vcrit{list-style:none;display:flex;flex-direction:column;gap:7px}
+.vc-phone .vcrit li{font-size:12.5px;color:var(--muted-2);display:flex;gap:8px}
+.vc-phone .vcrit li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none}
+.vc-phone .vmeta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px;padding:14px;background:var(--scenario-bg);border-radius:14px}
+.vc-phone .vmeta .k{font-size:11.5px;color:var(--muted)}
+.vc-phone .vmeta .v{font-size:13px;font-weight:600;margin-top:1px}
+.vc-phone .endsheet{position:absolute;left:0;right:0;bottom:0;z-index:60;background:#fff;border-radius:26px 26px 0 0;padding:24px 22px 30px;transform:translateY(100%);transition:transform .3s}
+.vc-phone .endsheet.show{transform:translateY(0)}
+.vc-phone .endsheet h3{font-size:18px;font-weight:700}
+.vc-phone .endsheet p{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.vc-phone .endsheet .btns{display:flex;gap:12px;margin-top:20px}
+.vc-phone .endsheet .btns button{flex:1;border-radius:14px;padding:14px;font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;border:none}
+.vc-phone .endsheet .stay{background:#EEF0F4;color:var(--ink)}
+.vc-phone .endsheet .go{background:var(--danger);color:#fff}
+.vc-phone .toast{position:absolute;left:50%;bottom:230px;transform:translateX(-50%);background:rgba(8,12,20,.9);color:#fff;font-size:12.5px;padding:10px 16px;border-radius:22px;z-index:70;opacity:0;transition:.25s;white-space:nowrap}
+.vc-phone .toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>Illuminate — Learner Mobile Flow</h1>
+  <p>Screens 1 → 6 for team demo. Screen 6 uses the video-call layout. Same theme, type &amp; colors throughout.</p>
+  <div class="legend">Brand: <b>purple → teal gradient</b> · Poppins · card UI &nbsp;|&nbsp; ✓ notes = fixes applied &nbsp;|&nbsp; Screen 6 is interactive</div>
+</div>
+
+<div class="grid">
+
+<!-- ===== SHARED STATUS-BAR ICON MARKUP is repeated per frame ===== -->
+
+<!-- SCREEN 1 -->
+<div class="frame-wrap">
+  <div class="frame-label"><span class="n">1</span> Assessment brief</div>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A11 11 0 0 0 8.5.5 11 11 0 0 0 1.2 3.5L2.5 4.9A8.7 8.7 0 0 1 8.5 2.5zM8.5 6c1.2 0 2.3.5 3.1 1.3l1.3-1.4A6.7 6.7 0 0 0 8.5 4a6.7 6.7 0 0 0-4.4 1.9l1.3 1.4A4.5 4.5 0 0 1 8.5 6zm0 3.5l1.9-2a2.7 2.7 0 0 0-3.8 0z"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="18" height="8" rx="1.5"/><rect x="23.5" y="3.5" width="2" height="5" rx="1"/></svg>
+    </span></div>
+    <div class="screen">
+      <div class="pad">
+        <div class="h-row"><div class="back-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></div><div class="h-title">Get Ready for Your Assessment</div></div>
+        <p class="subtle">This AI-guided assessment evaluates your responses in real time.</p>
+        <div class="card">
+          <div class="card-title skill-focus">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+            <div><div>Skill Focus</div><div class="val">Empathetic Patient Communication</div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="meta-grid">
+            <div class="meta"><div class="k">Context</div><div class="v">Healthcare</div></div>
+            <div class="meta"><div class="k">Learner Role</div><div class="v">Clinical Manager</div></div>
+            <div class="meta"><div class="k">Format</div><div class="v">Roleplay</div></div>
+            <div class="meta"><div class="k">Difficulty</div><div class="v">Intermediate</div></div>
+            <div class="meta"><div class="k">Est. Time</div><div class="v">25 min</div></div>
+            <div class="meta"><div class="k">Language</div><div class="v">English</div></div>
+          </div>
+        </div>
+        <div class="card scenario">
+          <div class="card-title"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg> Scenario Overview</div>
+          <div class="hr"></div>
+          <div class="s-h">De-escalating Patient Distress with Empathy in a Multicultural Context</div>
+          <p class="s-p">A patient from a different cultural background becomes visibly upset after a medical update they find confusing. As a mid-level clinical manager, you're called in to de-escalate.</p>
+          <div class="expander" id="exp1">
+            <div class="exp-head" onclick="document.getElementById('exp1').classList.toggle('open')"><span>See full task &amp; success criteria</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div class="exp-body">
+              <div class="s-h" style="margin-top:4px">What You'll Do</div>
+              <p class="s-p">Calmly engage with the patient, understand their emotional state and cultural context, and address their concerns with clarity, empathy, and cultural sensitivity.</p>
+              <div class="s-h" style="margin-top:12px">Your response should demonstrate</div>
+              <ul class="crit"><li>Interpersonal sensitivity</li><li>Active listening</li><li>Culturally aware communication</li><li>Patient-centered empathy</li></ul>
+            </div>
+          </div>
+          <div class="note"><span class="dot">FIX</span><span>Single heading, role wording aligned to the body, long task list collapsed so the learner can start sooner.</span></div>
+        </div>
+      </div>
+      <div class="footer-bar"><button class="cta">Continue <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    </div>
+  </div>
+  <div class="changes"><h4>Fixes on this screen</h4><ul>
+    <li>Removed duplicate "Your Response Should…" heading</li>
+    <li>Aligned role label with scenario body</li>
+    <li>Collapsed task + criteria behind "See details"</li>
+    <li>CTA renamed "Continue"</li>
+  </ul></div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="frame-wrap">
+  <div class="frame-label"><span class="n">2</span> Device setup — permissions</div>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A11 11 0 0 0 8.5.5 11 11 0 0 0 1.2 3.5L2.5 4.9A8.7 8.7 0 0 1 8.5 2.5zM8.5 6c1.2 0 2.3.5 3.1 1.3l1.3-1.4A6.7 6.7 0 0 0 8.5 4a6.7 6.7 0 0 0-4.4 1.9l1.3 1.4A4.5 4.5 0 0 1 8.5 6zm0 3.5l1.9-2a2.7 2.7 0 0 0-3.8 0z"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="18" height="8" rx="1.5"/><rect x="23.5" y="3.5" width="2" height="5" rx="1"/></svg>
+    </span></div>
+    <div class="screen">
+      <div class="pad">
+        <div class="s-h" style="font-size:13px;color:var(--muted);margin:6px 0 0">Skill Focus</div>
+        <div class="h-title" style="font-size:17px">Empathetic Patient Communication</div>
+        <div class="cam-tile cam-off">
+          <div class="cam-msg"><div class="t">Camera &amp; mic are off</div><div class="s">Enable your mic to continue — camera is optional.</div></div>
+          <div class="cam-name">Marshal Philip</div>
+          <div class="cam-ctrls">
+            <button class="ctrl off" title="Camera off"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2.2"/></svg></button>
+            <button class="ctrl off" title="Mic off"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><line x1="3" y1="3" x2="21" y2="21" stroke-width="2.2"/></svg></button>
+          </div>
+        </div>
+        <div class="req-row">
+          <div class="req"><div class="rt"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg> Microphone</div><span class="badge req-need">Required · tap to allow</span></div>
+          <div class="req"><div class="rt"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M15 10l5-3v10l-5-3v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z"/></svg> Camera</div><span class="badge opt">Optional</span></div>
+        </div>
+        <div class="device-row">
+          <div class="device"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="dn">AirPods Pro</span><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="device"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg><span class="dn">Phone Speaker</span><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        </div>
+        <div class="note"><span class="dot">FIX</span><span>Full device names shown (no "Headphon…" cut-off) so the learner can confirm audio routing.</span></div>
+        <div class="reminder">
+          <div class="rt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 10h.01M12 10h.01M16 10h.01M21 12a9 9 0 0 1-9 9c-1.5 0-3-.4-4.3-1L3 21l1-4.7A9 9 0 1 1 21 12z"/></svg> Your AI partner &amp; your role</div>
+          <p>Sarah responds in real time and follows the scenario. Stay empathetic, address her concern, and keep it professional.</p>
+          <div class="pillrow">
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Real-time</span>
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Be empathetic</span>
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Communicate professionally</span>
+          </div>
+          <div class="note" style="margin-top:12px"><span class="dot">FIX</span><span>Two repetitive cards condensed into one compact reminder.</span></div>
+        </div>
+      </div>
+      <div class="footer-bar"><button class="cta ghost">Back</button><button class="cta disabled" title="Allow microphone to continue">Begin roleplay</button></div>
+    </div>
+  </div>
+  <div class="changes"><h4>Fixes on this screen</h4><ul>
+    <li>"are off" grammar fixed; off-state buttons neutral grey, not red</li>
+    <li>Camera Optional, mic Required — audio is what's assessed</li>
+    <li>Primary CTA disabled until mic permission granted</li>
+    <li>Full device names; two reminder cards merged</li>
+  </ul></div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="frame-wrap">
+  <div class="frame-label"><span class="n">3</span> Device setup — ready</div>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A11 11 0 0 0 8.5.5 11 11 0 0 0 1.2 3.5L2.5 4.9A8.7 8.7 0 0 1 8.5 2.5zM8.5 6c1.2 0 2.3.5 3.1 1.3l1.3-1.4A6.7 6.7 0 0 0 8.5 4a6.7 6.7 0 0 0-4.4 1.9l1.3 1.4A4.5 4.5 0 0 1 8.5 6zm0 3.5l1.9-2a2.7 2.7 0 0 0-3.8 0z"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="18" height="8" rx="1.5"/><rect x="23.5" y="3.5" width="2" height="5" rx="1"/></svg>
+    </span></div>
+    <div class="screen">
+      <div class="pad">
+        <div class="s-h" style="font-size:13px;color:var(--muted);margin:6px 0 0">Skill Focus</div>
+        <div class="h-title" style="font-size:17px">Empathetic Patient Communication</div>
+        <div class="cam-tile cam-on">
+          <div class="avatar-glyph"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+          <div class="cam-name">Marshal Philip</div>
+          <div class="cam-ctrls">
+            <button class="ctrl on" title="Camera on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z"/></svg></button>
+            <button class="ctrl on" title="Mic on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+          </div>
+        </div>
+        <div class="req-row">
+          <div class="req"><div class="rt"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-ink)" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg> Microphone</div><span class="badge req-on">✓ Allowed</span></div>
+          <div class="req"><div class="rt"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-ink)" stroke-width="2"><path d="M15 10l5-3v10l-5-3v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z"/></svg> Camera</div><span class="badge req-on">✓ On (optional)</span></div>
+        </div>
+        <div class="device-row">
+          <div class="device"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="dn">AirPods Pro</span><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="device"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg><span class="dn">AirPods Pro</span><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        </div>
+        <div class="reminder">
+          <div class="rt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> You're all set</div>
+          <p>You'll start with a short un-scored warm-up, then the graded roleplay begins. You can pause any time.</p>
+          <div class="note" style="margin-top:12px"><span class="dot">FIX</span><span>Sets expectations: warm-up first, pausing is possible — calms first-timer nerves.</span></div>
+        </div>
+      </div>
+      <div class="footer-bar"><button class="cta ghost">Back</button><button class="cta">Begin roleplay <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    </div>
+  </div>
+  <div class="changes"><h4>Fixes on this screen</h4><ul>
+    <li>Enabled state is clear (green ✓ on mic &amp; camera)</li>
+    <li>CTA active with a distinct verb: "Begin roleplay"</li>
+    <li>Pre-sets the warm-up + pause expectations</li>
+  </ul></div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="frame-wrap">
+  <div class="frame-label"><span class="n">4</span> Roleplay — guided start (AI paused)</div>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A11 11 0 0 0 8.5.5 11 11 0 0 0 1.2 3.5L2.5 4.9A8.7 8.7 0 0 1 8.5 2.5zM8.5 6c1.2 0 2.3.5 3.1 1.3l1.3-1.4A6.7 6.7 0 0 0 8.5 4a6.7 6.7 0 0 0-4.4 1.9l1.3 1.4A4.5 4.5 0 0 1 8.5 6zm0 3.5l1.9-2a2.7 2.7 0 0 0-3.8 0z"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="18" height="8" rx="1.5"/><rect x="23.5" y="3.5" width="2" height="5" rx="1"/></svg>
+    </span></div>
+    <div class="screen">
+      <div class="pad">
+        <div class="video-hero std">
+          <div class="vh-inner"><div class="avatar-glyph"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div></div>
+          <div class="cam-name">Sarah (AI) · paused</div>
+          <div class="selfview"><div class="av"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><span class="you">You</span></div>
+        </div>
+        <div class="center"><div class="practice-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg> Practice — not scored yet</div></div>
+        <div class="status-line ai" style="opacity:.5">Sarah is paused while you read this</div>
+        <button class="speak-btn speak-wait"><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>Tap to speak when ready</button>
+      </div>
+      <div class="dim"></div>
+      <div class="coach" style="top:300px">
+        <div class="arrow" style="top:-10px;left:60px"></div>
+        <h3>How it works</h3>
+        <p>Sarah waits while you read. Tap the mic to speak, tap again when you're done. You'll get one practice turn before scoring starts.</p>
+        <div class="dotrow"><span class="on"></span><span></span></div>
+        <div class="row"><button class="skip">Skip tutorial</button><button class="next">Got it</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="changes"><h4>Fixes on this screen</h4><ul>
+    <li>AI is <b>paused</b> during the tutorial — no talking over the learner</li>
+    <li>Two coachmarks merged into one combined tip</li>
+    <li>"Practice — not scored" badge lowers first-turn anxiety</li>
+  </ul></div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="frame-wrap">
+  <div class="frame-label"><span class="n">5</span> Warm-up turn (un-scored)</div>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A11 11 0 0 0 8.5.5 11 11 0 0 0 1.2 3.5L2.5 4.9A8.7 8.7 0 0 1 8.5 2.5zM8.5 6c1.2 0 2.3.5 3.1 1.3l1.3-1.4A6.7 6.7 0 0 0 8.5 4a6.7 6.7 0 0 0-4.4 1.9l1.3 1.4A4.5 4.5 0 0 1 8.5 6zm0 3.5l1.9-2a2.7 2.7 0 0 0-3.8 0z"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="18" height="8" rx="1.5"/><rect x="23.5" y="3.5" width="2" height="5" rx="1"/></svg>
+    </span></div>
+    <div class="screen">
+      <div class="pad">
+        <div class="video-hero std">
+          <div class="vh-inner"><div class="avatar-glyph"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div></div>
+          <div class="cam-name">Sarah (AI Character)</div>
+          <div class="selfview speaking"><div class="av"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><span class="you">You</span></div>
+        </div>
+        <div class="center"><div class="practice-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg> Practice — say hello to test your mic</div></div>
+        <div class="status-line you">You're speaking <span class="wave"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <button class="speak-btn speak-active"><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>Tap when you're done speaking</button>
+        <button class="type-instead"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Type instead</button>
+        <div class="reminder" style="margin-top:18px">
+          <div class="rt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Heads up</div>
+          <p>This turn doesn't count. When you're comfortable, the graded scenario will begin automatically.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="changes"><h4>Fixes on this screen</h4><ul>
+    <li>Dedicated un-scored warm-up turn before grading starts</li>
+    <li>Green "You're speaking" state + live mic feedback</li>
+    <li>"Type instead" fallback for noisy / accessibility cases</li>
+  </ul></div>
+</div>
+
+<!-- SCREEN 6 — VIDEO CALL -->
+<div class="frame-wrap">
+  <div class="frame-label"><span class="n">6</span> Live roleplay — video-call layout ★</div>
+  <div class="phone vc-phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A11 11 0 0 0 8.5.5 11 11 0 0 0 1.2 3.5L2.5 4.9A8.7 8.7 0 0 1 8.5 2.5zM8.5 6c1.2 0 2.3.5 3.1 1.3l1.3-1.4A6.7 6.7 0 0 0 8.5 4a6.7 6.7 0 0 0-4.4 1.9l1.3 1.4A4.5 4.5 0 0 1 8.5 6zm0 3.5l1.9-2a2.7 2.7 0 0 0-3.8 0z"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12" fill="#fff"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="#fff"/><rect x="2" y="2" width="18" height="8" rx="1.5"/><rect x="23.5" y="3.5" width="2" height="5" rx="1"/></svg>
+    </span></div>
+    <div class="screen">
+      <div class="callbg">
+        <div class="face"><svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <div class="name"><span class="live"></span> Sarah · Patient</div>
+      </div>
+      <div class="topbar">
+        <button class="iconbtn" onclick="vcToast('Pauses the session — Sarah waits')"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+        <div class="timepill">
+          <span class="seg"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 4:12</span>
+          <span class="div"></span>
+          <span class="turns"><i class="done"></i><i class="done"></i><i class="cur"></i><i></i><i></i></span>
+        </div>
+        <button class="iconbtn" onclick="vcToast('Audio & device settings')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></svg></button>
+      </div>
+      <div class="pip" id="pip"><div class="av"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><span class="you">You</span></div>
+      <button class="pipshow" id="pipshow" onclick="vcTogglePip()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-5 7-5s7 1.5 7 5"/></svg> Show you</button>
+      <div class="bottom">
+        <div class="vstatus" id="vstatus">Sarah is responding <span class="dots" style="color:#fff"><i></i><i></i><i></i></span></div>
+        <button class="speak think" id="vspeak" onclick="vcCycle()"><span class="mic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span id="vspeaklabel">Wait for your turn…</span></button>
+        <div class="dock">
+          <button class="dockbtn" onclick="vcToast('Replays Sarah\'s last message')"><span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M3.5 15a9 9 0 1 0 2.2-9.3L1 10"/></svg></span><span class="l">Replay</span></button>
+          <button class="dockbtn" onclick="vcOpen('vscenario')"><span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span><span class="l">Scenario</span></button>
+          <button class="dockbtn" onclick="vcOpen('vtranscript')"><span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="badge">2</span></span><span class="l">Transcript</span></button>
+          <button class="dockbtn" onclick="vcTogglePip()"><span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-5 7-5s7 1.5 7 5"/></svg></span><span class="l" id="piplabel">Hide me</span></button>
+          <button class="dockbtn end" onclick="vcOpenEnd()"><span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5c-1.3 0-2.6-.2-3.8-.6a1 1 0 0 0-1 .2l-1.7 1.7a14 14 0 0 1-6.5-6.5l1.7-1.7a1 1 0 0 0 .2-1 12 12 0 0 1-.6-3.8 1 1 0 0 0-1-1H4a1 1 0 0 0-1 1A17 17 0 0 0 20 21a1 1 0 0 0 1-1v-3.5a1 1 0 0 0-1-1z" transform="rotate(135 12 12)"/></svg></span><span class="l">End</span></button>
+        </div>
+        <div class="hint">Tap the speak bar to preview turn states · tap Transcript / Scenario to open</div>
+      </div>
+      <div class="scrim" id="vscrim" onclick="vcClose()"></div>
+      <div class="sheet" id="vtranscript">
+        <div class="grab"></div>
+        <div class="sheet-h"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Transcript</h3><button class="x" onclick="vcClose()">✕</button></div>
+        <div class="sheet-body">
+          <div class="tag">Oldest → newest · session time</div>
+          <div class="bubble patient"><div class="b-head"><span>Sarah (Patient) <svg class="spark" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 5L19 9.5 14 11l-2 5-2-5L5 9.5 10.5 8z"/></svg></span><span class="ts">0:08</span></div><div class="b-body">Hi… I just got off the phone with someone from your team, and honestly, I'm really confused and upset. They told me my treatment plan was changing, but no one explained why. I feel completely left out of the loop.</div></div>
+          <div class="bubble learner"><div class="b-head"><span>Marshal Philip (You)</span><span class="ts">0:31</span></div><div class="b-body">Thank you for sharing that with me. I want to make sure you never feel out of the loop again.</div><div class="b-check"><span class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Transcribed</span><button class="b-fix">Not quite right? Re-record</button></div></div>
+        </div>
+      </div>
+      <div class="sheet" id="vscenario">
+        <div class="grab"></div>
+        <div class="sheet-h"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg> Scenario</h3><button class="x" onclick="vcClose()">✕</button></div>
+        <div class="sheet-body">
+          <div class="sc-title">De-escalating patient distress in a multicultural context</div>
+          <div class="sc-p">A patient from a different cultural background is upset after a confusing medical update. As clinical manager, calmly engage, understand their state, and address concerns with empathy.</div>
+          <div class="vmeta"><div><div class="k">Role</div><div class="v">Clinical Manager</div></div><div><div class="k">Skill</div><div class="v">Empathetic Comms</div></div></div>
+          <div class="sc-h">Your response should show</div>
+          <ul class="vcrit"><li>Interpersonal sensitivity</li><li>Active listening</li><li>Culturally aware communication</li><li>Patient-centered empathy</li></ul>
+        </div>
+      </div>
+      <div class="endsheet" id="vendsheet">
+        <h3>End and submit this assessment?</h3>
+        <p>You're at exchange 3 of ~8. Once you submit, you can't resume this session.</p>
+        <div class="btns"><button class="stay" onclick="vcClose()">Keep going</button><button class="go">End &amp; submit</button></div>
+      </div>
+      <div class="toast" id="vtoast"></div>
+    </div>
+  </div>
+  <div class="changes"><h4>Fixes on this screen ★</h4><ul>
+    <li>Reads as a video call — matches the learner's mental model</li>
+    <li>Patient's face fills the screen; empathy cues stay central</li>
+    <li>Transcript &amp; Scenario open on demand (badge shows messages exist)</li>
+    <li>Three turn states on the speak bar (tap to preview)</li>
+    <li>Pacing pill (time + exchange dots) kept subtle, top-center</li>
+    <li>Self-view is a hideable PiP · Replay last message</li>
+    <li>"End" isolated, red &amp; confirmation-guarded — no accidental exit</li>
+    <li>Re-record inside the transcript for transcript trust</li>
+  </ul></div>
+</div>
+
+</div>
+
+<script>
+/* screen 6 (video call) */
+function vcTogglePip(){
+  var p=document.getElementById('pip'),s=document.getElementById('pipshow'),l=document.getElementById('piplabel');
+  if(p.classList.contains('hidden')){p.classList.remove('hidden');s.style.display='none';l.textContent='Hide me';}
+  else{p.classList.add('hidden');s.style.display='flex';l.textContent='Show me';}
+}
+function vcOpen(id){document.getElementById('vscrim').classList.add('show');document.getElementById(id).classList.add('show');}
+function vcOpenEnd(){document.getElementById('vscrim').classList.add('show');document.getElementById('vendsheet').classList.add('show');}
+function vcClose(){
+  document.getElementById('vscrim').classList.remove('show');
+  ['vtranscript','vscenario','vendsheet'].forEach(function(i){document.getElementById(i).classList.remove('show')});
+}
+var vcT;
+function vcToast(m){var t=document.getElementById('vtoast');t.textContent=m;t.classList.add('show');clearTimeout(vcT);vcT=setTimeout(function(){t.classList.remove('show')},1800);}
+var vcStates=[
+  {st:'Sarah is responding <span class="dots" style="color:#fff"><i></i><i></i><i></i></span>',cls:'think',label:'Wait for your turn…',pip:false},
+  {st:'Sarah is talking <span class="wave" style="color:#fff"><i></i><i></i><i></i><i></i><i></i></span>',cls:'idle',label:'Tap to speak when ready',pip:false},
+  {st:'You\'re speaking <span class="wave" style="color:#fff"><i></i><i></i><i></i><i></i><i></i></span>',cls:'active',label:'Tap when you\'re done',pip:true}
+];
+var vi=0;
+function vcCycle(){
+  vi=(vi+1)%vcStates.length;var s=vcStates[vi];
+  document.getElementById('vstatus').innerHTML=s.st;
+  document.getElementById('vspeak').className='speak '+s.cls;
+  document.getElementById('vspeaklabel').textContent=s.label;
+  var p=document.getElementById('pip');
+  if(s.pip){p.classList.add('speaking')}else{p.classList.remove('speaking')}
+}
+</script>
+</body>
+</html>
