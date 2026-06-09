@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illuminate — Assessment Details</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --grad:linear-gradient(135deg,#6c5cd4,#4a7fe0);
+    --grad-bg:linear-gradient(135deg,#7367d8 0%,#3fb3a3 100%);
+    --brand:#4a7fe0; --link:#2f6fe0;
+    --panel:#ffffff; --surface:#f5f6fb; --surface-2:#eef0f7;
+    --border:#e9eaf2; --border-strong:#d9dbe7;
+    --text:#2e3344; --text-2:#6b7280; --text-3:#9aa0ab;
+    --amber-bg:#fdf4d0; --amber-text:#8a6d1a; --amber-border:#f0e2a6;
+    --green-bg:#e8f8ef; --green-text:#138a5b; --green-border:#a6e3c6;
+    --info-bg:#eaf1fd; --info-text:#2f6fe0; --info-border:#cfe0fb;
+    --gray-bg:#eef0f4; --gray-text:#6b7280;
+    --radius:12px; --rail:#14141f;
+  }
+  body.dark{
+    --panel:#1b1c28; --surface:#23242f; --surface-2:#2b2c39;
+    --border:#2d2f3d; --border-strong:#3b3d4e;
+    --text:#e9eaf2; --text-2:#a9adba; --text-3:#787c87;
+    --amber-bg:#3a3414; --amber-text:#f1cb5d; --amber-border:#5a5020;
+    --green-bg:#0f3329; --green-text:#5dcaa5; --green-border:#1d5946;
+    --info-bg:#1b2740; --info-text:#7aa6ee; --info-border:#2c3f63;
+    --gray-bg:#2a2b37; --gray-text:#9aa0ab;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;background:var(--grad-bg);display:flex;font-family:'Inter',system-ui,sans-serif;color:var(--text);}
+  h1,h2,h3{font-family:'Poppins','Inter',sans-serif;}
+  .icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  .rail{width:80px;flex:0 0 80px;background:var(--rail);display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:18px;position:sticky;top:0;height:100vh;}
+  .logo{width:42px;height:42px;border-radius:12px;background:conic-gradient(from 200deg,#6c5cd4,#4a7fe0,#1d9e85,#7dd36f,#6c5cd4);display:flex;align-items:center;justify-content:center;}
+  .logo::after{content:"";width:16px;height:16px;border-radius:4px 12px 4px 12px;background:#fff;opacity:.92;}
+  .rail-btn{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:#b7b9c8;background:transparent;border:1px solid #2b2c3a;cursor:pointer;transition:.15s;}
+  .rail-btn:hover{color:#fff;border-color:#3a3b4d;}
+  .rail-btn.active{background:var(--grad);color:#fff;border:none;}
+  .rail-btn.plain{border:none;}
+  .rail-spacer{flex:1;}
+
+  .stage{flex:1;min-width:0;padding:16px 16px 16px 14px;}
+  .panel{background:var(--panel);border-radius:20px;min-height:calc(100vh - 32px);padding:30px 34px;}
+
+  .pagehead{display:flex;align-items:center;gap:12px;}
+  .back{width:34px;height:34px;border-radius:50%;background:var(--grad);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 34px;}
+  .back .icon{width:18px;height:18px;}
+  h1{font-size:26px;font-weight:600;margin:0;letter-spacing:-.01em;}
+  .crumbs{margin:6px 0 0 46px;font-size:13.5px;color:var(--text-2);}
+  .crumbs a{color:var(--text-2);text-decoration:none;cursor:pointer;}
+  .crumbs .cur{color:var(--link);}
+
+  /* SUMMARY HEADER */
+  .summary{margin-top:22px;border:1px solid var(--border);border-radius:16px;padding:20px 22px;}
+  .sum-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+  .sum-top h2{font-size:18px;font-weight:600;margin:0 0 9px;}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;}
+  .badge{font-size:12px;padding:4px 11px;border-radius:9px;display:inline-flex;align-items:center;gap:5px;}
+  .badge .icon{width:14px;height:14px;}
+  .b-roleplay{background:var(--info-bg);color:var(--info-text);}
+  .b-gray{background:var(--gray-bg);color:var(--gray-text);}
+  .btn-soft{height:38px;padding:0 14px;border:1px solid var(--border-strong);background:transparent;color:var(--text);border-radius:11px;font:inherit;font-size:13.5px;display:flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;}
+  .btn-soft:hover{background:var(--surface);}
+  .btn-soft .icon{width:16px;height:16px;}
+  .sum-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border);}
+  .setup{width:100%;font-size:13.5px;}
+  .setup td{padding:6px 0;vertical-align:top;}
+  .setup td.k{color:var(--text-2);width:34%;}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;}
+  .tile{background:var(--surface);border-radius:12px;padding:13px 15px;}
+  .tile .k{font-size:12.5px;color:var(--text-2);display:block;margin-bottom:3px;}
+  .tile .v{font-size:22px;font-weight:600;font-family:'Poppins';}
+  .tile.warn{background:var(--amber-bg);}
+  .tile.warn .k,.tile.warn .v{color:var(--amber-text);}
+
+  .toolbar{margin:28px 0 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .toolbar h2{font-size:17px;font-weight:600;margin:0;margin-right:auto;}
+  .search{position:relative;}
+  .search .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-3);}
+  .search input{height:42px;padding:0 14px 0 38px;border:1px solid var(--border-strong);border-radius:12px;background:var(--panel);color:var(--text);font:inherit;font-size:14px;width:240px;outline:none;}
+  .search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--info-bg);}
+  .selwrap{position:relative;display:flex;align-items:center;height:42px;padding:0 36px 0 14px;border:1px solid var(--border-strong);border-radius:12px;background:var(--panel);font-size:14px;color:var(--text);}
+  .selwrap label{color:var(--text-2);margin-right:5px;}
+  .selwrap select{border:none;background:transparent;font:inherit;color:var(--link);font-weight:500;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;}
+  .selwrap .chev{position:absolute;right:12px;width:16px;height:16px;color:var(--text-3);pointer-events:none;}
+
+  table.learners{width:100%;border-collapse:collapse;font-size:13.5px;}
+  table.learners thead th{text-align:left;font-weight:500;color:var(--text-2);background:var(--surface);padding:12px 14px;font-size:13px;cursor:pointer;user-select:none;white-space:nowrap;}
+  table.learners thead th:first-child{border-radius:10px 0 0 10px;}
+  table.learners thead th:last-child{border-radius:0 10px 10px 0;cursor:default;}
+  table.learners thead th .sort{display:inline-flex;align-items:center;gap:5px;}
+  table.learners thead th .arr{width:13px;height:13px;opacity:.35;}
+  table.learners thead th.sorted .arr{opacity:1;color:var(--link);}
+  table.learners tbody td{padding:14px;border-bottom:1px solid var(--border);}
+  table.learners tbody tr:hover{background:var(--surface);}
+  .who{display:flex;align-items:center;gap:11px;}
+  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600;flex:0 0 34px;}
+  .av-info{background:var(--info-bg);color:var(--info-text);}
+  .av-gray{background:var(--surface-2);color:var(--text-2);}
+  .who .nm{display:block;}
+  .who .em{font-size:12px;color:var(--text-3);}
+  .muted{color:var(--text-3);}
+  .scoreb{font-weight:600;}
+  .pill{font-size:11.5px;padding:4px 10px;border-radius:8px;white-space:nowrap;}
+  .pill-done{background:var(--green-bg);color:var(--green-text);}
+  .pill-pend{background:var(--amber-bg);color:var(--amber-text);}
+  .pill-ns{background:var(--gray-bg);color:var(--gray-text);}
+  .link{color:var(--link);text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:500;cursor:pointer;background:none;border:none;font:inherit;}
+  .link .icon{width:14px;height:14px;}
+  .link.dim{color:var(--text-3);cursor:default;}
+  .empty{padding:40px;text-align:center;color:var(--text-3);}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#2e3344;color:#fff;padding:11px 18px;border-radius:11px;font-size:14px;opacity:0;transition:.25s;z-index:60;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media(max-width:760px){.sum-grid{grid-template-columns:1fr;} .rail{display:none;} .stage{padding:10px;} .panel{padding:22px 16px;} .search input{width:100%;}}
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="i-chev-left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 1121 11.5z"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="8" y="3" width="8" height="4" rx="1.5"/></symbol>
+</svg>
+
+<nav class="rail">
+  <div class="logo"></div>
+  <button class="rail-btn" title="Create" onclick="toast('New item — demo only')"><svg class="icon"><use href="#i-plus"/></svg></button>
+  <button class="rail-btn active" title="Dashboard" onclick="location.href='course-details.html'"><svg class="icon"><use href="#i-grid"/></svg></button>
+  <div class="rail-spacer"></div>
+  <button class="rail-btn plain" title="Toggle theme" onclick="toggleTheme()"><svg class="icon" id="theme-ic"><use href="#i-sun"/></svg></button>
+  <button class="rail-btn plain" title="Log out" onclick="toast('Logged out — demo only')"><svg class="icon"><use href="#i-logout"/></svg></button>
+</nav>
+
+<main class="stage">
+  <section class="panel">
+    <div class="pagehead">
+      <button class="back" onclick="location.href='course-details.html'"><svg class="icon"><use href="#i-chev-left"/></svg></button>
+      <h1>Consultative discovery in residential leasing</h1>
+    </div>
+    <div class="crumbs"><a onclick="location.href='course-details.html'">Dashboard</a> &rsaquo; <a onclick="location.href='course-details.html'">AMLI Demo (AMLID)</a> &rsaquo; <span class="cur">Consultative discovery in residential leasing</span></div>
+
+    <div class="summary">
+      <div class="sum-top">
+        <div>
+          <h2>Assessment overview</h2>
+          <div class="badges">
+            <span class="badge b-roleplay"><svg class="icon"><use href="#i-msg"/></svg>Roleplay</span>
+            <span class="badge b-gray">Cohort A</span>
+            <span class="badge b-gray">Due Jun 06, 2026</span>
+          </div>
+        </div>
+        <button class="btn-soft" onclick="toast('Export results — demo only')"><svg class="icon"><use href="#i-download"/></svg>Export results</button>
+      </div>
+      <div class="sum-grid">
+        <table class="setup">
+          <tr><td class="k">Learner role</td><td>Junior leasing agent</td></tr>
+          <tr><td class="k">Context</td><td>Commercial real estate</td></tr>
+          <tr><td class="k">Scenario</td><td>Qualify a prospect relocating a 12-person team into a downtown commercial space, then recommend a suitable unit.</td></tr>
+          <tr><td class="k">Rubric</td><td>5 criteria · max score 10 (discovery, rapport, needs analysis, objection handling, close)</td></tr>
+        </table>
+        <div class="tiles">
+          <div class="tile"><span class="k">Learners</span><span class="v" id="t-total">6</span></div>
+          <div class="tile"><span class="k">Completed</span><span class="v" id="t-done">3</span></div>
+          <div class="tile warn"><span class="k">Review pending</span><span class="v" id="t-pend">2</span></div>
+          <div class="tile"><span class="k">Avg score</span><span class="v" id="t-avg">7.9</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <h2>Learners</h2>
+      <div class="search"><svg class="icon"><use href="#i-search"/></svg><input id="q" type="text" placeholder="Search by name" oninput="render()"></div>
+      <div class="selwrap"><label>Status:</label><select id="fStatus" onchange="render()"><option>All</option><option>Completed</option><option>Review pending</option><option>Not started</option></select><svg class="icon chev"><use href="#i-chev-down"/></svg></div>
+    </div>
+
+    <table class="learners">
+      <thead>
+        <tr>
+          <th data-key="name" onclick="sortBy('name')"><span class="sort">Learner <svg class="icon arr"><use href="#i-sort"/></svg></span></th>
+          <th data-key="date" onclick="sortBy('date')"><span class="sort">Completed on <svg class="icon arr"><use href="#i-sort"/></svg></span></th>
+          <th data-key="attempts" onclick="sortBy('attempts')"><span class="sort">Attempts <svg class="icon arr"><use href="#i-sort"/></svg></span></th>
+          <th data-key="time" onclick="sortBy('time')"><span class="sort">Time <svg class="icon arr"><use href="#i-sort"/></svg></span></th>
+          <th data-key="score" onclick="sortBy('score')"><span class="sort">Score <svg class="icon arr"><use href="#i-sort"/></svg></span></th>
+          <th data-key="status" onclick="sortBy('status')"><span class="sort">Status <svg class="icon arr"><use href="#i-sort"/></svg></span></th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="emptyMsg"></div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LEARNERS=[
+ {name:'Ayan Learner',email:'work.ayandutta+3@gmail.com',date:'Jun 04, 2026',attempts:1,time:'9m',score:null,status:'Review pending'},
+ {name:'Ayan 18',email:'ayan.dutta+18@hurix.com',date:'Jun 04, 2026',attempts:2,time:'7m',score:8.2,status:'Completed'},
+ {name:'Maya Rodriguez',email:'maya.r@hurix.com',date:'Jun 03, 2026',attempts:1,time:'11m',score:9.1,status:'Completed'},
+ {name:'Leo Park',email:'leo.park@hurix.com',date:'Jun 05, 2026',attempts:1,time:'6m',score:null,status:'Review pending'},
+ {name:'Sara Khan',email:'sara.khan@hurix.com',date:'Jun 02, 2026',attempts:3,time:'14m',score:6.4,status:'Completed'},
+ {name:'Tom Hayes',email:'tom.hayes@hurix.com',date:'—',attempts:0,time:'—',score:null,status:'Not started'}
+];
+const STATUS_ORDER={'Completed':0,'Review pending':1,'Not started':2};
+
+function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+
+let sort={key:'name',dir:'asc'};
+function val(l,k){
+  if(k==='name')return l.name.toLowerCase();
+  if(k==='date')return l.date==='—'?null:new Date(l.date).getTime();
+  if(k==='attempts')return l.attempts||l.attempts===0?(l.status==='Not started'?null:l.attempts):null;
+  if(k==='time')return l.time==='—'?null:parseInt(l.time);
+  if(k==='score')return typeof l.score==='number'?l.score:null;
+  if(k==='status')return STATUS_ORDER[l.status];
+  return null;
+}
+function cmp(a,b){
+  let va=val(a,sort.key), vb=val(b,sort.key);
+  const ma=va===null||va===undefined, mb=vb===null||vb===undefined;
+  if(ma&&mb)return 0; if(ma)return 1; if(mb)return -1;
+  if(va<vb)return sort.dir==='asc'?-1:1;
+  if(va>vb)return sort.dir==='asc'?1:-1;
+  return 0;
+}
+function sortBy(k){
+  if(sort.key===k)sort.dir=sort.dir==='asc'?'desc':'asc';
+  else{sort.key=k;sort.dir='asc';}
+  render();
+}
+
+function render(){
+  const q=document.getElementById('q').value.toLowerCase();
+  const st=document.getElementById('fStatus').value;
+  let rows=LEARNERS.filter(l=>l.name.toLowerCase().includes(q)&&(st==='All'||l.status===st));
+  rows.sort(cmp);
+
+  document.querySelectorAll('th[data-key]').forEach(th=>{
+    const on=th.dataset.key===sort.key;
+    th.classList.toggle('sorted',on);
+    th.querySelector('.arr use').setAttribute('href', on?(sort.dir==='asc'?'#i-up':'#i-down'):'#i-sort');
+  });
+
+  const tb=document.getElementById('tbody');
+  document.getElementById('emptyMsg').innerHTML = rows.length?'':'<div class="empty">No learners match your search.</div>';
+  tb.innerHTML=rows.map(l=>{
+    const pill=l.status==='Completed'?'pill-done':l.status==='Review pending'?'pill-pend':'pill-ns';
+    const action = l.status==='Review pending'
+      ? `<button class="link" onclick="toast('Open submission to review — demo only')">Review <svg class="icon"><use href="#i-arrow-right"/></svg></button>`
+      : l.status==='Completed'
+      ? `<button class="link" onclick="toast('View graded submission — demo only')">View <svg class="icon"><use href="#i-arrow-right"/></svg></button>`
+      : `<span class="link dim">Not started</span>`;
+    return `<tr>
+      <td><div class="who"><div class="avatar ${l.status==='Not started'?'av-gray':'av-info'}">${initials(l.name)}</div>
+        <div><span class="nm">${l.name}</span><span class="em">${l.email}</span></div></div></td>
+      <td class="${l.date==='—'?'muted':''}">${l.date}</td>
+      <td class="${l.status==='Not started'?'muted':''}">${l.status==='Not started'?'—':(l.attempts+(l.attempts===1?' try':' tries'))}</td>
+      <td class="${l.time==='—'?'muted':''}">${l.time}</td>
+      <td>${typeof l.score==='number'?`<span class="scoreb">${l.score}</span>`:'<span class="muted">—</span>'}</td>
+      <td><span class="pill ${pill}">${l.status}</span></td>
+      <td>${action}</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  document.getElementById('theme-ic').innerHTML='<use href="#'+(document.body.classList.contains('dark')?'i-moon':'i-sun')+'"/>';
+}
+let tT;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2000);}
+
+render();
+</script>
+</body>
+</html>
