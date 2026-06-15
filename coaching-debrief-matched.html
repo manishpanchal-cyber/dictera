@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Coaching Conversation Debrief — Round 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* matched to Round 1 report */
+    --header-navy:#0a1c3c;
+    --stage-1:#143058;
+    --stage-2:#0c2047;
+    --bg-deep:#081428;
+
+    --blue:#1773ea;
+    --blue-strong:#0e5fc1;
+    --blue-soft:#e7f0fd;
+    --track:#e3e7ef;
+
+    --yellow:#f4c52e;
+    --amber-text:#e3a92b;
+
+    --green:#27a953;
+    --green-soft:#e8f6ee;
+    --amber:#e08a12;
+    --amber-soft:#fcf2e0;
+    --red:#e32934;
+
+    --periwinkle:#7aa3ea;
+
+    --chip-navy:#0e2249;
+    --chip-box:#1a376c;
+    --chip-icon:#5a9bf0;
+
+    --ink:#13213f;
+    --ink-soft:#4a5a78;
+    --muted:#8190a8;
+    --line:#e8edf5;
+    --surface:#fff;
+
+    --radius:18px;
+    --radius-lg:24px;
+    --shadow:0 18px 38px -22px rgba(0,0,0,.55);
+    --shadow-lift:0 26px 50px -24px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.55;
+    background:
+      radial-gradient(900px 500px at 15% -5%,rgba(36,74,140,.55),transparent 60%),
+      radial-gradient(800px 500px at 95% 10%,rgba(20,52,108,.5),transparent 55%),
+      var(--bg-deep);
+    min-height:100vh;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;letter-spacing:-.02em;line-height:1.15}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    background:var(--header-navy);color:#fff;
+    padding:16px clamp(16px,4vw,46px);
+    display:flex;align-items:center;gap:16px;
+  }
+  .brand{display:flex;align-items:center;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px}
+  .swirl{width:30px;height:30px;border-radius:50%;flex:none;position:relative;
+    background:conic-gradient(#e3322f 0 25%,#f4c52e 25% 50%,#27a953 50% 75%,#1773ea 75% 100%);
+    transform:rotate(-12deg)}
+  .swirl::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--header-navy)}
+  .wordmark{font-family:'Sora';font-weight:800;font-size:1.12rem;letter-spacing:-.03em}
+  .round{font-family:'Sora';font-weight:700;font-size:1.05rem;padding-left:16px;border-left:1px solid rgba(255,255,255,.18)}
+  .spacer{flex:1}
+  .user{display:flex;align-items:center;gap:11px;font-weight:600;font-size:.92rem}
+  .avatar{width:36px;height:36px;border-radius:50%;flex:none;border:2px solid rgba(255,255,255,.3);
+    background:linear-gradient(135deg,#3d92f0,#e32934);display:grid;place-items:center;
+    color:#fff;font-family:'Sora';font-weight:700;font-size:.82rem}
+
+  /* ---------- Stage ---------- */
+  .stage{
+    max-width:1180px;margin:22px auto;padding:clamp(16px,2.4vw,26px) clamp(16px,2.4vw,28px) 34px;
+    background:linear-gradient(150deg,var(--stage-1),var(--stage-2) 75%);
+    border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.06);
+    box-shadow:0 40px 80px -40px rgba(0,0,0,.7);
+  }
+
+  /* ---------- Sub-nav ---------- */
+  .subnav{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+  .tabs{display:flex;gap:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;padding:5px}
+  .tab{border:0;background:transparent;cursor:pointer;font-family:'Inter';font-weight:600;font-size:.85rem;
+    color:var(--amber-text);padding:9px 17px;border-radius:999px;white-space:nowrap;transition:.18s}
+  .tab:hover{color:#fff}
+  .tab.active{background:var(--yellow);color:#10233f;box-shadow:0 6px 16px -6px rgba(244,197,46,.6)}
+  .nav-actions{display:flex;gap:10px;margin-left:auto}
+  .btn{cursor:pointer;border-radius:999px;font-family:'Inter';font-weight:600;font-size:.85rem;
+    padding:11px 19px;display:inline-flex;align-items:center;gap:8px;transition:.18s;border:1px solid transparent}
+  .btn svg{width:15px;height:15px}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:#1668d6;box-shadow:0 8px 20px -8px var(--blue)}
+  .btn-ghost{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.22);color:#cdd9ee}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.5);color:#fff}
+
+  /* ---------- Cards / panels ---------- */
+  .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:#aebfdc;margin:30px 0 14px;display:flex;align-items:center;gap:12px}
+  .eyebrow::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12)}
+
+  /* ---------- Hero (white score card) ---------- */
+  .hero{display:grid;grid-template-columns:280px 1fr;overflow:hidden}
+  .score-wrap{padding:38px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;border-right:1px solid var(--line);background:linear-gradient(180deg,#fbfcff,#f4f8ff)}
+  .donut{width:184px;height:184px;transform:rotate(-90deg)}
+  .donut .track{fill:none;stroke:var(--track);stroke-width:13}
+  .donut .meter{fill:none;stroke:url(#g);stroke-width:13;stroke-linecap:round;
+    stroke-dasharray:534;stroke-dashoffset:534;transition:stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1)}
+  .donut-center{position:absolute;display:flex;flex-direction:column;align-items:center}
+  .donut-num{font-family:'Sora';font-weight:800;font-size:2.6rem;color:var(--ink);line-height:1}
+  .donut-lbl{font-size:.74rem;color:var(--muted);margin-top:3px}
+  .score-pill{margin-top:18px;background:var(--green-soft);color:#0f7a36;border:1px solid #bce8cd;
+    font-size:.74rem;font-weight:700;padding:6px 14px;border-radius:999px}
+  .hero-body{padding:38px clamp(24px,3vw,40px)}
+  .hero-body h1{font-size:clamp(1.35rem,2.4vw,1.7rem);margin-bottom:16px}
+  .hero-body p{color:var(--ink-soft);font-size:.95rem;margin-bottom:13px;max-width:64ch}
+  .hero-body .lead{color:var(--ink);font-size:1rem;font-weight:500}
+  .tip{margin-top:4px;display:inline-flex;gap:10px;align-items:flex-start;background:var(--blue-soft);
+    border:1px solid #c6def9;padding:12px 16px;border-radius:14px;color:#0d4a93;font-size:.9rem}
+  .tip svg{width:18px;height:18px;flex:none;margin-top:1px;color:var(--blue)}
+
+  /* ---------- Quotes ---------- */
+  .quote-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  .quote{padding:24px 24px 24px 28px;position:relative;transition:.25s}
+  .quote:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+  .quote::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:4px;background:var(--blue)}
+  .quote.commit::before{background:var(--red)}
+  .q-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);
+    display:flex;align-items:center;gap:8px;margin-bottom:11px}
+  .quote.commit .q-eyebrow{color:var(--red)}
+  .q-eyebrow svg{width:16px;height:16px}
+  .quote p{font-style:italic;font-size:1rem;line-height:1.6;color:var(--ink)}
+
+  /* ---------- Panel ---------- */
+  .panel{padding:30px clamp(22px,3vw,34px);margin-top:18px}
+  .panel-head h2{font-size:1.3rem}
+  .panel-head .sub{color:var(--muted);font-size:.9rem;margin-top:4px;margin-bottom:22px}
+
+  .meter-row{padding:18px 0;border-top:1px solid var(--line)}
+  .meter-row:first-of-type{border-top:0;padding-top:2px}
+  .meter-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:9px}
+  .meter-name{font-family:'Sora';font-weight:600;font-size:1.02rem}
+  .meter-pct{font-family:'Sora';font-weight:700;font-size:1.05rem;color:var(--blue)}
+  .bar{height:9px;border-radius:99px;background:#eef2f8;overflow:hidden}
+  .bar>i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--blue-strong),#3d92f0);transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+  .meter-note{color:var(--ink-soft);font-size:.9rem;margin-top:10px;max-width:94ch}
+
+  /* ---------- Strengths ---------- */
+  .strength-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:6px}
+  .strength{padding:24px;position:relative;overflow:hidden;transition:.25s}
+  .strength:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift)}
+  .strength .edge{height:4px;position:absolute;top:0;left:0;right:0}
+  .strength.good .edge{background:var(--green)}
+  .strength.watch .edge{background:var(--amber)}
+  .s-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .s-name{display:flex;align-items:center;gap:9px;font-family:'Sora';font-weight:600;font-size:1.02rem}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .good .dot{background:var(--green)}.watch .dot{background:var(--amber)}
+  .s-pct{font-family:'Sora';font-weight:700;font-size:1.45rem}
+  .good .s-pct{color:var(--green)}.watch .s-pct{color:var(--amber)}
+  .ring{height:6px;border-radius:99px;background:#eef2f8;overflow:hidden;margin:6px 0 14px}
+  .ring>i{display:block;height:100%;width:0;border-radius:99px;transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+  .good .ring>i{background:var(--green)}.watch .ring>i{background:var(--amber)}
+  .tag{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:6px}
+  .good .tag{background:var(--green-soft);color:#0f7a36}
+  .watch .tag{background:var(--amber-soft);color:#a4640a}
+  .strength p{color:var(--ink-soft);font-size:.9rem;margin-top:13px}
+
+  /* ---------- Impact (dark navy chips, matched to KPI chips) ---------- */
+  .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:6px}
+  .chip{background:var(--chip-navy);border-radius:16px;padding:22px;color:#fff;transition:.25s;
+    border:1px solid rgba(255,255,255,.05)}
+  .chip:hover{transform:translateY(-4px)}
+  .chip-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .chip-box{width:42px;height:42px;border-radius:11px;background:var(--chip-box);color:var(--chip-icon);
+    display:grid;place-items:center;flex:none}
+  .chip-box svg{width:21px;height:21px}
+  .chip-title{font-family:'Sora';font-weight:600;font-size:.96rem}
+  .chip-delta{display:flex;align-items:baseline;gap:7px;margin-bottom:11px}
+  .chip-delta b{font-family:'Sora';font-weight:800;font-size:1.9rem;color:#5ad27e;line-height:1}
+  .chip-delta .arrow{color:#5ad27e;font-size:.95rem}
+  .chip-delta span{font-size:.74rem;color:#9fb0cf;font-weight:600}
+  .chip p{color:#bccae2;font-size:.86rem}
+
+  /* ---------- FLO topics (periwinkle pills) ---------- */
+  .flo{padding:26px clamp(22px,3vw,32px);margin-top:18px}
+  .flo h3{font-size:1.15rem;margin-bottom:16px}
+  .pills{display:flex;flex-wrap:wrap;gap:12px}
+  .pill{background:var(--periwinkle);color:#10233f;font-weight:600;font-size:.88rem;
+    padding:10px 18px;border-radius:999px;border:0;cursor:default;transition:.18s}
+  .pill:hover{filter:brightness(1.06);transform:translateY(-2px)}
+  .flo .hint{color:var(--muted);font-size:.82rem;margin-top:14px}
+
+  footer{text-align:center;color:#7e90b3;font-size:.8rem;padding:24px 0 4px}
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr}
+    .score-wrap{border-right:0;border-bottom:1px solid var(--line)}
+    .quote-grid,.strength-grid,.impact-grid{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+    .donut .meter{stroke-dashoffset:64!important}
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <div class="swirl" aria-hidden="true"></div>
+        <span class="wordmark">pepsico</span>
+      </div>
+      <span class="round">Round 3</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="user"><span>John Marshal</span><div class="avatar">JM</div></div>
+  </header>
+
+  <!-- STAGE -->
+  <div class="stage">
+
+    <nav class="subnav">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab">Review &amp; Simulation Score</button>
+        <button class="tab" role="tab">Outcome Summary</button>
+        <button class="tab active" role="tab" aria-selected="true">Coaching Debrief</button>
+      </div>
+      <div class="nav-actions">
+        <button class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          Replay
+        </button>
+        <button class="btn btn-ghost">
+          Your Capstone Report
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="card hero">
+      <div class="score-wrap">
+        <div style="position:relative;display:grid;place-items:center">
+          <svg class="donut" viewBox="0 0 200 200" aria-hidden="true">
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#3d92f0"/><stop offset="1" stop-color="#0e5fc1"/>
+            </linearGradient></defs>
+            <circle class="track" cx="100" cy="100" r="85"/>
+            <circle class="meter" cx="100" cy="100" r="85"/>
+          </svg>
+          <div class="donut-center"><div class="donut-num">88%</div><div class="donut-lbl">Overall Score</div></div>
+        </div>
+        <div class="score-pill">Strong coaching effectiveness</div>
+      </div>
+      <div class="hero-body">
+        <h1>Overall Coaching Effectiveness</h1>
+        <p class="lead">You helped Jordan recognize a key leadership gap: while he excels at understanding issues and building relationships, he does not always translate insight into accountability and sustained action.</p>
+        <p>Throughout the conversation, you grounded your coaching in observed behaviors, encouraged reflection, and guided Jordan toward a practical adjustment he can apply in future customer and performance discussions.</p>
+        <div class="tip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg>
+          <span><strong>To increase your impact further:</strong> help employees define more specific commitments and success measures before concluding the conversation.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUOTES -->
+    <div class="quote-grid">
+      <div class="card quote">
+        <div class="q-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="m17 21-1.5-1.5"/><path d="M22 17a3 3 0 1 0-6 0 3 3 0 0 0 6 0Z"/></svg>
+          Jordan's Key Takeaway
+        </div>
+        <p>"Understanding the issue is only the first step. Effective leadership means creating ownership, follow-through, and clear expectations."</p>
+      </div>
+      <div class="card quote commit">
+        <div class="q-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Jordan's Commitment
+        </div>
+        <p>"In future customer and performance conversations, I will close discussions with a clear next step, defined ownership, and expected outcomes."</p>
+      </div>
+    </div>
+
+    <!-- COACHING PROCESS -->
+    <section class="card panel">
+      <div class="panel-head"><h2>Coaching Process</h2><div class="sub">How effectively did you conduct the coaching conversation?</div></div>
+      <div class="meter-row">
+        <div class="meter-top"><span class="meter-name">Establish Purpose &amp; Context</span><span class="meter-pct">92%</span></div>
+        <div class="bar"><i data-w="92"></i></div>
+        <p class="meter-note">You clearly explained the purpose of the discussion and referenced examples from Jordan's earlier customer and performance conversations. This helped ground the discussion in observable behaviors rather than assumptions.</p>
+      </div>
+      <div class="meter-row">
+        <div class="meter-top"><span class="meter-name">Ask Thoughtful Questions</span><span class="meter-pct">85%</span></div>
+        <div class="bar"><i data-w="85"></i></div>
+        <p class="meter-note">You encouraged Jordan to reflect on his approach and explore the gap between his intent and impact. At times, additional probing questions could have uncovered deeper root causes behind his tendency to stop at diagnosis.</p>
+      </div>
+      <div class="meter-row">
+        <div class="meter-top"><span class="meter-name">Drive Action &amp; Commitment</span><span class="meter-pct">88%</span></div>
+        <div class="bar"><i data-w="88"></i></div>
+        <p class="meter-note">You successfully guided Jordan toward a future behavior change and secured commitment to action. Defining a specific success measure would have strengthened the commitment further.</p>
+      </div>
+    </section>
+
+    <!-- STRENGTHS -->
+    <div class="eyebrow">Coaching Strengths &amp; Development Opportunity</div>
+    <div class="strength-grid">
+      <div class="card strength good">
+        <div class="edge"></div>
+        <div class="s-top"><span class="s-name"><span class="dot"></span>Active Listening</span><span class="s-pct">91%</span></div>
+        <div class="ring"><i data-w="91"></i></div>
+        <span class="tag">Strength</span>
+        <p>You built on Jordan's responses and adapted your coaching based on what he shared. This helped create a collaborative discussion rather than a one-way feedback session.</p>
+      </div>
+      <div class="card strength good">
+        <div class="edge"></div>
+        <div class="s-top"><span class="s-name"><span class="dot"></span>Empathy</span><span class="s-pct">88%</span></div>
+        <div class="ring"><i data-w="88"></i></div>
+        <span class="tag">Strength</span>
+        <p>You acknowledged Jordan's strengths and positive intentions while still challenging him to improve. This maintained trust and encouraged honest reflection.</p>
+      </div>
+      <div class="card strength watch">
+        <div class="edge"></div>
+        <div class="s-top"><span class="s-name"><span class="dot"></span>Solution Focus</span><span class="s-pct">74%</span></div>
+        <div class="ring"><i data-w="74"></i></div>
+        <span class="tag">Develop next</span>
+        <p>While the conversation identified meaningful insights, the final action plan could have been more specific. Help employees define exactly what they will do differently, when they will apply it, and how success will be measured.</p>
+      </div>
+    </div>
+
+    <!-- IMPACT (dark chips matched to KPI chips) -->
+    <section class="card panel">
+      <div class="panel-head"><h2>Impact on the Business</h2><div class="sub">How could this coaching influence future performance?</div></div>
+      <div class="impact-grid">
+        <div class="chip">
+          <div class="chip-head">
+            <div class="chip-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg></div>
+            <div class="chip-title">Team Engagement</div>
+          </div>
+          <div class="chip-delta"><span class="arrow">▲</span><b>+4</b><span>projected lift</span></div>
+          <p>Your coaching helped Jordan connect leadership behaviors to accountability. This increases the likelihood that he will set clearer expectations, coach more effectively, and create stronger ownership within his team.</p>
+        </div>
+        <div class="chip">
+          <div class="chip-head">
+            <div class="chip-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg></div>
+            <div class="chip-title">Customer Engagement</div>
+          </div>
+          <div class="chip-delta"><span class="arrow">▲</span><b>+3</b><span>projected lift</span></div>
+          <p>You reinforced the importance of balancing relationship-building with expectation-setting. This can help Jordan create stronger customer partnerships while maintaining accountability.</p>
+        </div>
+        <div class="chip">
+          <div class="chip-head">
+            <div class="chip-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m7 14 4-4 3 3 5-5"/></svg></div>
+            <div class="chip-title">Business Outcomes</div>
+          </div>
+          <div class="chip-delta"><span class="arrow">▲</span><b>+5</b><span>projected lift</span></div>
+          <p>You helped Jordan connect leadership behaviors to execution consistency and long-term performance. By focusing on ownership and follow-through, the coaching supports stronger service, productivity, and sales outcomes over time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLO TOPICS -->
+    <section class="card flo">
+      <h3>Revisit these FLO topics</h3>
+      <div class="pills">
+        <button class="pill">Solution Focus</button>
+        <button class="pill">Goal Setting</button>
+        <button class="pill">Accountability</button>
+        <button class="pill">Coaching</button>
+      </div>
+      <p class="hint">Recommended focus areas based on this debrief — refine and personalize as needed.</p>
+    </section>
+
+    <footer>Coaching Conversation Debrief · Round 3 · Generated for John Marshal</footer>
+  </div>
+
+<script>
+  const circ = 2 * Math.PI * 85;
+  const donut = document.querySelector('.donut .meter');
+  const fill = () => {
+    document.querySelectorAll('.bar>i,.ring>i').forEach(el=>el.style.width = el.dataset.w + '%');
+    if(donut) donut.style.strokeDashoffset = circ * (1 - 0.88);
+  };
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((e,o)=>{e.forEach(x=>{if(x.isIntersecting){fill();o.disconnect();}})},{threshold:.1});
+    io.observe(document.querySelector('.stage'));
+  } else fill();
+  setTimeout(fill,300);
+</script>
+</body>
+</html>
